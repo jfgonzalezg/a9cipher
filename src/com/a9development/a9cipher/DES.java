@@ -1,10 +1,11 @@
 package com.a9development.a9cipher;
 
-public class DES {
+public class DES implements Cloneable {
 	private byte[] PlainText;
 	private byte[] CipherText;
 	private byte[] Key;
 	private boolean[] BoolPlainText;
+	private boolean[] BoolTempText;
 	private boolean[] BoolCipherText;
 	private boolean[] BoolKey;
 	private boolean[][] Key56;
@@ -108,16 +109,17 @@ public class DES {
 
 	public DES(byte[] toEncrypt, byte[] DESKey) throws Exception {
 		if (toEncrypt.length != 8) {
-			throw new Exception("PlainText must be 8 bytes long");
+			throw new Exception("Plain text must be 8 bytes long");
 		} else if (DESKey.length != 8) {
 			throw new Exception("Key must be 8 bytes long");
 		} else {
-			PlainText = toEncrypt;
-			Key = DESKey;
+			PlainText = toEncrypt.clone();
+			Key = DESKey.clone();
 			CipherText = new byte[8];
 			BoolPlainText = new boolean[64];
-			BoolCipherText = new boolean[64];
 			BoolKey = new boolean[64];
+			BoolCipherText = new boolean[64];
+			unencrypted = false;
 			
 			boolean[] tmpPT = new boolean[8];
 			boolean[] tmpK = new boolean[8];
@@ -129,13 +131,27 @@ public class DES {
 					BoolKey[(8*i)+j] = tmpK[j];
 				}
 			}
+			BoolTempText = BoolPlainText.clone();
 		}
-		CipherText = new byte[8];
-		unencrypted = true;
+	}
+	
+	public DES(boolean[] toEncrypt, boolean[] DESKey) throws Exception {
+		if (toEncrypt.length != 64) {
+			throw new Exception("Plain text must be 64 bits (booleans) long");
+		} else if (DESKey.length != 64) {
+			throw new Exception("Key must be 64 bits (booleans) long");
+		} else {
+			BoolPlainText = toEncrypt.clone();
+			BoolKey = DESKey.clone();
+			BoolCipherText = new boolean[64];
+			BoolTempText = BoolPlainText.clone();
+			CipherText = new byte[8];
+			unencrypted = false;
+		}
 	}
 	
 	public void Encrypt() {
-		if (unencrypted) {
+		if (unencrypted) {		
 			doInitialPermutation();
 			makeSubKeys();
 			doRounds();
@@ -145,7 +161,9 @@ public class DES {
 	}
 	
 	private void buildCipherText() {
-		
+		if (unencrypted) {
+			Encrypt();
+		}
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				CipherText[7-i] += ((BoolCipherText[(8*i)+j])?1:0) * Math.pow(2, 7-j);
@@ -162,17 +180,17 @@ public class DES {
 	}
 		
 	private void doInitialPermutation() {
-		boolean[] tmp = BoolCipherText.clone();
 		for (int i = 0; i < 64; i++) {
-			BoolCipherText[i] = tmp[IP[i]-1];
+			BoolCipherText[i] = BoolTempText[IP[i]-1];
 		}
+		BoolTempText = BoolCipherText.clone();
 	}
 	
 	private void doInverseInitialPermutation() {
-		boolean[] tmp = BoolCipherText.clone();
 		for (int i = 0; i < 64; i++) {
-			BoolCipherText[i] = tmp[InverseIP[i]-1];
+			BoolCipherText[i] = BoolTempText[InverseIP[i]-1];
 		}
+		BoolCipherText = BoolTempText.clone();
 	}
 	
 	private void doRounds() {
@@ -298,4 +316,17 @@ public class DES {
 	public void setKey(byte[] key) {
 		Key = key;
 	}
+
+	public boolean[] getBoolPlainText() {
+		return BoolPlainText;
+	}
+
+	public boolean[] getBoolCipherText() {
+		return BoolCipherText;
+	}
+
+	public boolean[] getBoolKey() {
+		return BoolKey;
+	}
+	
 }
