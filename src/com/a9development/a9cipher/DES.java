@@ -18,23 +18,23 @@
 package com.a9development.a9cipher;
 
 public class DES implements Cloneable {
-	private byte[] PlainText;
-	private byte[] CipherText;
-	private byte[] Key;
-	private boolean[] BoolPlainText;
-	private boolean[] BoolTempText;
-	private boolean[] BoolCipherText;
-	private boolean[] BoolKey;
-	private boolean[][] Key56;
-	private boolean[][] SubKeys;
-	private boolean[][] L;
-	private boolean[][] R;
-	private boolean[][] C;
-	private boolean[][] D;
+	private byte[] desPlainText;
+	private byte[] desCipherText;
+	private byte[] desKey;
+	private boolean[] desBoolPlainText;
+	private boolean[] desBoolTempText;
+	private boolean[] desBoolCipherText;
+	private boolean[] desBoolKey;
+	private boolean[][] desKey56;
+	private boolean[][] desSubKeys;
+	private boolean[][] desLeftHalf;
+	private boolean[][] desRightHalf;
+	private boolean[][] desC;
+	private boolean[][] desD;
 	private boolean unencrypted;
 		
-	private int[] Schedule = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
-	private int[] IP = {
+	private int[] desKeySchedule = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
+	private int[] desIP = {
 			58, 50, 42, 34, 26, 18, 10, 2,
 			60, 52, 44, 36, 28, 20, 12, 4,
 			62, 54, 46, 38, 30, 22, 14, 6, 
@@ -43,7 +43,7 @@ public class DES implements Cloneable {
 			59, 51, 43, 35, 27, 19, 11, 3, 
 			61, 53, 45, 37, 29, 21, 13, 5, 
 			63, 55, 47, 39, 31, 23, 15, 7};
-	private int[] InverseIP = {
+	private int[] desInverseIP = {
 			40, 8, 48, 16, 56, 24, 64, 32, 
 			39, 7, 47, 15, 55, 23, 63, 31, 
 			38, 6, 46, 14, 54, 22, 62, 30, 
@@ -52,7 +52,7 @@ public class DES implements Cloneable {
 			35, 3, 43, 11, 51, 19, 59, 27, 
 			34, 2, 42, 10, 50, 18, 58, 26, 
 			33, 1, 41,  9, 49, 17, 57, 25};
-	private int[] E = {
+	private int[] desE = {
 			32,  1,  2,  3,  4,  5, 
 			 4,  5,  6,  7,  8,  9, 
 			 8,  9, 10, 11, 12, 13, 
@@ -61,12 +61,12 @@ public class DES implements Cloneable {
 			20, 21, 22, 23, 24, 25, 
 			24, 25, 26, 27, 28, 29, 
 			28, 29, 30, 31, 32,  1};
-	private int[] P = {
+	private int[] desP = {
 			16,  7, 20, 21, 29, 12, 28, 17, 
 			 1, 15, 23, 26,  5, 18, 31, 10, 
 			 2,  8, 24, 14, 32, 27,  3,  9, 
 			19, 13, 30,  6, 22, 11,  4, 25};
-	private int[] PC1 = {
+	private int[] desPC1 = {
 			57, 49, 41, 33, 25, 17,  9,
 			 1, 58, 50, 42, 34, 26, 18,
 			10,  2, 59, 51, 43, 35, 27,
@@ -75,14 +75,14 @@ public class DES implements Cloneable {
 			 7, 62, 54, 46, 38, 30, 22,
 			14,  6, 61, 53, 45, 37, 29,
 			21, 13,  5, 28, 20, 12,  4};
-	private int[] PC2 = {
+	private int[] desPC2 = {
 			14, 17, 11, 24,  1,  5,  3, 28,
 			15,  6, 21, 10, 23, 19, 12,  4,
 			26,  8, 16,  7, 27, 20, 13,  2, 
 			41, 52, 31, 37, 47, 55, 30, 40, 
 			51, 45, 33, 48, 44, 49, 39, 56, 
 			34, 53, 46, 42, 50, 36, 29, 32};
-	private int[][][] SBoxes = {{{14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7},
+	private int[][][] desSBoxes = {{{14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7},
 		{0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8},
 		{4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0},
 		{15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13}},
@@ -115,45 +115,45 @@ public class DES implements Cloneable {
 		{7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8},
 		{2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11}}};
 
-	public DES(byte[] toEncrypt, byte[] DESKey) throws Exception {
-		if (toEncrypt.length != 8) {
+	public DES(byte[] desTextInput, byte[] desKeyInput) throws Exception {
+		if (desTextInput.length != 8) {
 			throw new Exception("Plain text must be 8 bytes long");
-		} else if (DESKey.length != 8) {
+		} else if (desKeyInput.length != 8) {
 			throw new Exception("Key must be 8 bytes long");
 		} else {
-			PlainText = toEncrypt.clone();
-			Key = DESKey.clone();
-			CipherText = new byte[8];
-			BoolPlainText = new boolean[64];
-			BoolKey = new boolean[64];
+			desPlainText = desTextInput.clone();
+			desKey = desKeyInput.clone();
+			desCipherText = new byte[8];
+			desBoolPlainText = new boolean[64];
+			desBoolKey = new boolean[64];
 			unencrypted = true;
 			
-			boolean[] tmpPT = new boolean[8];
-			boolean[] tmpK = new boolean[8];
+			boolean[] tDesPlainText = new boolean[8];
+			boolean[] tDesKey = new boolean[8];
 			for (int i = 0; i < 8; i++) {
-				tmpPT = convertToBits(PlainText[i]);
-				tmpK = convertToBits(Key[i]);
+				tDesPlainText = convertToBits(desPlainText[i]);
+				tDesKey = convertToBits(desKey[i]);
 				for (int j = 0; j < 8; j++) {
-					BoolPlainText[(8*i)+j] = tmpPT[j];
-					BoolKey[(8*i)+j] = tmpK[j];
+					desBoolPlainText[(8*i)+j] = tDesPlainText[j];
+					desBoolKey[(8*i)+j] = tDesKey[j];
 				}
 			}
-			BoolCipherText = BoolPlainText.clone();
-			BoolTempText = BoolPlainText.clone();
+			desBoolCipherText = desBoolPlainText.clone();
+			desBoolTempText = desBoolPlainText.clone();
 		}
 	}
 	
-	public DES(boolean[] toEncrypt, boolean[] DESKey) throws Exception {
-		if (toEncrypt.length != 64) {
+	public DES(boolean[] desInput, boolean[] desKey) throws Exception {
+		if (desInput.length != 64) {
 			throw new Exception("Plain text must be 64 bits (booleans) long");
-		} else if (DESKey.length != 64) {
+		} else if (desKey.length != 64) {
 			throw new Exception("Key must be 64 bits (booleans) long");
 		} else {
-			BoolPlainText = toEncrypt.clone();
-			BoolKey = DESKey.clone();
-			BoolCipherText = BoolPlainText.clone();
-			BoolTempText = BoolPlainText.clone();
-			CipherText = new byte[8];
+			desBoolPlainText = desInput.clone();
+			desBoolKey = desKey.clone();
+			desBoolCipherText = desBoolPlainText.clone();
+			desBoolTempText = desBoolPlainText.clone();
+			desCipherText = new byte[8];
 			unencrypted = true;
 		}
 	}
@@ -168,18 +168,40 @@ public class DES implements Cloneable {
 		}
 	}
 	
+	public void Decrypt() {
+		if (!unencrypted) {
+			// TODO Decrypt here
+		}
+	}
+
 	private void buildCipherText() {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				CipherText[i] += ((BoolCipherText[(8*i)+j])?1:0) * Math.pow(2, 7-j);
+				desCipherText[i] += ((desBoolCipherText[(8*i)+j])?1:0) * Math.pow(2, 7-j);
 			}
 		}
+	}
+	
+	public String getPlainTextString() {
+		String PTString = "";
+		for (int i = 0; i < 8; i++) {
+			PTString += Integer.toString((desPlainText[i] & 0xff) + 0x100, 16).substring(1);
+		}
+		return PTString;
+	}
+
+	public String getKeyString() {
+		String KString = "";
+		for (int i = 0; i < 8; i++) {
+			KString += Integer.toString((desKey[i] & 0xff) + 0x100, 16).substring(1);
+		}
+		return KString;
 	}
 	
 	public String getCipherTextString() {
 		String CTString = "";
 		for (int i = 0; i < 8; i++) {
-			CTString += Integer.toString((CipherText[i] & 0xff) + 0x100, 16).substring(1);
+			CTString += Integer.toString((desCipherText[i] & 0xff) + 0x100, 16).substring(1);
 		}
 		return CTString;
 	}
@@ -194,41 +216,41 @@ public class DES implements Cloneable {
 		
 	private void doInitialPermutation() {
 		for (int i = 0; i < 64; i++) {
-			BoolTempText[i] = BoolCipherText[IP[i]-1];
+			desBoolTempText[i] = desBoolCipherText[desIP[i]-1];
 		}
-		BoolCipherText = BoolTempText.clone();
+		desBoolCipherText = desBoolTempText.clone();
 	}
 	
 	private void doInverseInitialPermutation() {
 		for (int i = 0; i < 64; i++) {
-			BoolTempText[i] = BoolCipherText[InverseIP[i]-1];
+			desBoolTempText[i] = desBoolCipherText[desInverseIP[i]-1];
 		}
-		BoolCipherText = BoolTempText.clone();
+		desBoolCipherText = desBoolTempText.clone();
 	}
 	
 	private void doRounds() {
-		L = new boolean[18][32];
-		R = new boolean[18][32];
+		desLeftHalf = new boolean[18][32];
+		desRightHalf = new boolean[18][32];
 		
 		for (int i = 0; i < 32; i++) {
-			L[0][i] = BoolTempText[i];
-			R[0][i] = BoolTempText[32+i];
+			desLeftHalf[0][i] = desBoolTempText[i];
+			desRightHalf[0][i] = desBoolTempText[32+i];
 		}
 		
 		for (int i = 1; i < 17; i++) {
-			L[i] = R[i-1];
+			desLeftHalf[i] = desRightHalf[i-1];
 			for (int j = 0; j < 32; j++) {
-				R[i][j] = (F(R[i-1], SubKeys[i-1])[j] != L[i-1][j]);
+				desRightHalf[i][j] = (F(desRightHalf[i-1], desSubKeys[i-1])[j] != desLeftHalf[i-1][j]);
 			}
 		}
 		
-		L[17] = R[16].clone();
-		R[17] = L[16].clone();
+		desLeftHalf[17] = desRightHalf[16].clone();
+		desRightHalf[17] = desLeftHalf[16].clone();
 		for (int i = 0; i < 32; i++) {
-			BoolTempText[i] = L[17][i];
-			BoolTempText[i+32] = R[17][i];
+			desBoolTempText[i] = desLeftHalf[17][i];
+			desBoolTempText[i+32] = desRightHalf[17][i];
 		}
-		BoolCipherText = BoolTempText.clone();
+		desBoolCipherText = desBoolTempText.clone();
 	}
 
 	private boolean[] F(boolean[] input, boolean[] Keyi) {
@@ -248,7 +270,7 @@ public class DES implements Cloneable {
 		for (int i = 0; i < 8; i++) {
 			int r = 2*((SBoxInput[(6*i)+0])?1:0) + ((SBoxInput[(6*i)+5])?1:0);
 			int c = 8*((SBoxInput[(6*i)+1])?1:0) + 4*((SBoxInput[(6*i)+2])?1:0) + 2*((SBoxInput[(6*i)+3])?1:0) + ((SBoxInput[(6*i)+4])?1:0);
-			tmp[i] = SBoxes[i][r][c];
+			tmp[i] = desSBoxes[i][r][c];
 		}
 		
 		boolean[] postS = new boolean[32];
@@ -265,7 +287,7 @@ public class DES implements Cloneable {
 	private boolean[] PermutationP(boolean[] toPermute) {
 		boolean[] permuted = new boolean[32];
 		for (int i = 0; i < 32; i++) {
-			permuted[i] = toPermute[P[i]-1];
+			permuted[i] = toPermute[desP[i]-1];
 		}
 		return permuted;
 	}
@@ -273,74 +295,62 @@ public class DES implements Cloneable {
 	private boolean[] Expand(boolean[] toExpand) {
 		boolean[] tmp = new boolean[48];
 		for (int i = 0; i < 48; i++) {
-			tmp[i] = toExpand[E[i]-1];
+			tmp[i] = toExpand[desE[i]-1];
 		}
 		return tmp;
 	}
 
 	private void makeSubKeys() {
-		SubKeys = new boolean[16][48];
-		Key56 = new boolean[17][56];
-		C = new boolean[17][28];
-		D = new boolean[17][28];
+		desSubKeys = new boolean[16][48];
+		desKey56 = new boolean[17][56];
+		desC = new boolean[17][28];
+		desD = new boolean[17][28];
 		
 		for (int i = 0; i < 56; i++) {
-			Key56[0][i] = BoolKey[PC1[i]-1]; 
+			desKey56[0][i] = desBoolKey[desPC1[i]-1]; 
 		}
 		
 		for (int i = 0; i < 28; i++) {
-			C[0][i] = Key56[0][i];
-			D[0][i] = Key56[0][28+i];
+			desC[0][i] = desKey56[0][i];
+			desD[0][i] = desKey56[0][28+i];
 		}
 		
 		for (int i = 1; i < 17; i++) {
 			for (int j = 0; j < 28; j++) {
-				Key56[i][j] = C[i][j] = C[i-1][(j+Schedule[i-1])%28];
-				Key56[i][28+j] = D[i][j] = D[i-1][(j+Schedule[i-1])%28];
+				desKey56[i][j] = desC[i][j] = desC[i-1][(j+desKeySchedule[i-1])%28];
+				desKey56[i][28+j] = desD[i][j] = desD[i-1][(j+desKeySchedule[i-1])%28];
 			}
 		}
 		
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 48; j++) {
-				SubKeys[i][j] = Key56[i+1][PC2[j]-1];
+				desSubKeys[i][j] = desKey56[i+1][desPC2[j]-1];
 			}
 		}
 	}
 	
 	public byte[] getPlainText() {
-		return PlainText;
+		return desPlainText;
 	}
 
 	public void setPlainText(byte[] plainText) {
-		PlainText = plainText;
+		desPlainText = plainText;
 	}
 
 	public byte[] getCipherText() {
-		return CipherText;
+		return desCipherText;
 	}
 
 	public void setCipherText(byte[] cipherText) {
-		CipherText = cipherText;
+		desCipherText = cipherText;
 	}
 
 	public byte[] getKey() {
-		return Key;
+		return desKey;
 	}
 
 	public void setKey(byte[] key) {
-		Key = key;
+		desKey = key;
 	}
 
-//	public boolean[] getBoolPlainText() {
-//		return BoolPlainText;
-//	}
-//
-//	public boolean[] getBoolCipherText() {
-//		return BoolCipherText;
-//	}
-//
-//	public boolean[] getBoolKey() {
-//		return BoolKey;
-//	}
-	
 }

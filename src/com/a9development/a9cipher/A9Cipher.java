@@ -36,10 +36,20 @@ public class A9Cipher {
 //		boolean[] CT = {true, true, false, true, true, false, true, false, false, false, false, false, false, false, true, false, true, true, false, false, true, true, true, false, false, false, true, true, true, false, true, false, true, false, false, false, true, false, false, true, true, true, true, false, true, true, false, false, true, false, true, false, true, true, false, false, false, false, true, true, true, false, true, true};
 		
 		try {
-			DES theDES = new DES(PT, K);
-			theDES.Encrypt();
-			System.out.println("Cipher Text: " + theDES.getCipherTextString());
-			
+			DES encrypter = new DES(PT, K);
+//			DES decrypter = new DES(CT, K);
+
+			encrypter.Encrypt();
+//			decrypter.Decrypt();
+
+			System.out.println("Plain Text:  " + encrypter.getPlainTextString());
+			System.out.println("Key Text:    " + encrypter.getKeyString());
+			System.out.println("Cipher Text: " + encrypter.getCipherTextString());
+
+//			System.out.println("Plain Text:  " + decrypter.getPlainTextString());
+//			System.out.println("Key Text:    " + decrypter.getKeyString());
+//			System.out.println("Cipher Text: " + decrypter.getCipherTextString());
+
 //			int PTErr = 0;
 //			int KErr = 0;
 //			int CTErr = 0;
