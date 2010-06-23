@@ -17,50 +17,56 @@
 
 package com.a9development.a9cipher;
 
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class A9Cipher {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-//		PT  = 0x02468aceeca86420
-//		Key = 0x0f1571c947d9e859
-//		CT  = 0xda02ce3a89ecac3b
+		Scanner in = new Scanner(System.in);
+		System.out.print("Enter 16-digit hex plaintext: ");
+		String userPlainText = in.nextLine().toLowerCase();
+		System.out.print("Enter 16-digit hex key: ");
+		String userKey = in.nextLine().toLowerCase();
 		
-		byte[] PT = {(byte)0x02, (byte)0x46, (byte)0x8a, (byte)0xce, (byte)0xec, (byte)0xa8, (byte)0x64, (byte)0x20};
-		byte[] K = {(byte)0x0f, (byte)0x15, (byte)0x71, (byte)0xc9, (byte)0x47, (byte)0xd9, (byte)0xe8, (byte)0x59};
-		byte[] CT = {(byte)0xda, (byte)0x02, (byte)0xce, (byte)0x3a, (byte)0x89, (byte)0xec, (byte)0xac, (byte)0x3b};
-		
-//		boolean[] PT = {false, false, false, false, false, false, true, false, false, true, false, false, false, true, true, false, true, false, false, false, true, false, true, false, true, true, false, false, true, true, true, false, true, true, true, false, true, true, false, false, true, false, true, false, true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, false, false, false, false, false};
-//		boolean[] K = {false, false, false, false, true, true, true, true, false, false, false, true, false, true, false, true, false, true, true, true, false, false, false, true, true, true, false, false, true, false, false, true, false, true, false, false, false, true, true, true, true, true, false, true, true, false, false, true, true, true, true, false, true, false, false, false, false, true, false, true, true, false, false, true};
-//		boolean[] CT = {true, true, false, true, true, false, true, false, false, false, false, false, false, false, true, false, true, true, false, false, true, true, true, false, false, false, true, true, true, false, true, false, true, false, false, false, true, false, false, true, true, true, true, false, true, true, false, false, true, false, true, false, true, true, false, false, false, false, true, true, true, false, true, true};
-		
-		try {
-			DES encrypter = new DES(PT, K);
-			encrypter.Encrypt();
-			
-			System.out.println("Plain Text:  " + encrypter.getPlainTextString());
-			System.out.println("Key Text:    " + encrypter.getKeyString());
-			System.out.println("Cipher Text: " + encrypter.getCipherTextString());
-			System.out.println("Expected CT: da02ce3a89ecac3b");
-			System.out.println();
-		} catch (Exception e) {
-			System.out.println("Could not initialize encrypter: " + e);
+		boolean found = false;
+		Pattern hexPattern = Pattern.compile("[^0-9a-f]");
+		Matcher PTMatcher = hexPattern.matcher(userPlainText);
+		Matcher KMatcher = hexPattern.matcher(userKey);
+		while (PTMatcher.find())
+			found = true;
+		while (KMatcher.find())
+			found = true;
+		if (found) {
+			System.out.println("Plaintext and key must be hex encoded");
+		} else {		
+			if (userPlainText.length() != 16)
+				System.out.println("Plain text must be 16 digits");
+			else if (userKey.length() != 16)
+				System.out.println("Key must be 16 digits");
+			else {
+				byte[] bytePlainText = new byte[8];
+				byte[] byteKey = new byte[8];
+				for (int i = 0; i < 16; i+=2) {
+					bytePlainText[i/2] = (byte) ((Character.digit(userPlainText.charAt(i), 16) << 4) + Character.digit(userPlainText.charAt(i+1), 16));
+					byteKey[i/2] = (byte) ((Character.digit(userKey.charAt(i), 16) << 4) + Character.digit(userKey.charAt(i+1), 16));
+				}
+				try {
+					DES theDES = new DES(bytePlainText, byteKey);
+					theDES.Encrypt();
+					System.out.println("Plaintext:  " + userPlainText);
+					System.out.println("Key:        " + userKey);
+					System.out.println("Ciphertext: " + theDES.getCipherTextString());
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}
 		}
-		
-		try {
-			DES decrypter = new DES(CT, K, true);
-			decrypter.Decrypt();
 
-			System.out.println("Cipher Text: " + decrypter.getCipherTextString());
-			System.out.println("Key Text:    " + decrypter.getKeyString());
-			System.out.println("Plain Text:  " + decrypter.getPlainTextString());
-			System.out.println("Expected PT: 02468aceeca86420");
-			System.out.println();
-		} catch (Exception e) {
-			System.out.println("Could not initialize decrypter: " + e);
-		}
-		
 	}
 
 }
