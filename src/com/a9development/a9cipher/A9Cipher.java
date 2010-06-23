@@ -29,7 +29,7 @@ public class A9Cipher {
 		
 		byte[] PT = {(byte)0x02, (byte)0x46, (byte)0x8a, (byte)0xce, (byte)0xec, (byte)0xa8, (byte)0x64, (byte)0x20};
 		byte[] K = {(byte)0x0f, (byte)0x15, (byte)0x71, (byte)0xc9, (byte)0x47, (byte)0xd9, (byte)0xe8, (byte)0x59};
-//		byte[] CT = {(byte)0xda, (byte)0x02, (byte)0xce, (byte)0x3a, (byte)0x89, (byte)0xec, (byte)0xac, (byte)0x3b};
+		byte[] CT = {(byte)0xda, (byte)0x02, (byte)0xce, (byte)0x3a, (byte)0x89, (byte)0xec, (byte)0xac, (byte)0x3b};
 		
 //		boolean[] PT = {false, false, false, false, false, false, true, false, false, true, false, false, false, true, true, false, true, false, false, false, true, false, true, false, true, true, false, false, true, true, true, false, true, true, true, false, true, true, false, false, true, false, true, false, true, false, false, false, false, true, true, false, false, true, false, false, false, false, true, false, false, false, false, false};
 //		boolean[] K = {false, false, false, false, true, true, true, true, false, false, false, true, false, true, false, true, false, true, true, true, false, false, false, true, true, true, false, false, true, false, false, true, false, true, false, false, false, true, true, true, true, true, false, true, true, false, false, true, true, true, true, false, true, false, false, false, false, true, false, true, true, false, false, true};
@@ -37,94 +37,30 @@ public class A9Cipher {
 		
 		try {
 			DES encrypter = new DES(PT, K);
-//			DES decrypter = new DES(CT, K);
-
 			encrypter.Encrypt();
-//			decrypter.Decrypt();
-
+			
 			System.out.println("Plain Text:  " + encrypter.getPlainTextString());
 			System.out.println("Key Text:    " + encrypter.getKeyString());
 			System.out.println("Cipher Text: " + encrypter.getCipherTextString());
-
-//			System.out.println("Plain Text:  " + decrypter.getPlainTextString());
-//			System.out.println("Key Text:    " + decrypter.getKeyString());
-//			System.out.println("Cipher Text: " + decrypter.getCipherTextString());
-
-//			int PTErr = 0;
-//			int KErr = 0;
-//			int CTErr = 0;
-//			
-//			System.out.print("Plaintext(b):  ");
-//			for (int i = 0; i < 64; i++) {
-//				System.out.print((PT[i])?1:0);
-//			}
-//			System.out.println();
-//			
-//			System.out.print("Plaintext(j):  ");
-//			for (int i = 0; i < 64; i++) {
-//				System.out.print((theDES.getBoolPlainText()[i])?1:0);
-//			}
-//			System.out.println();
-//			
-//			System.out.print("Error:         ");
-//			for (int i = 0; i < 64; i++) {
-//				if (PT[i] != theDES.getBoolPlainText()[i]) {
-//					System.out.print(1);
-//					PTErr++;
-//				} else {
-//					System.out.print(0);
-//				}
-//			}
-//			System.out.println("\n" + "Total Errors:  " + PTErr + "\n");
-//			
-//			System.out.print("Key(b):        ");
-//			for (int i = 0; i < 64; i++) {
-//				System.out.print((K[i])?1:0);
-//			}
-//			System.out.println();
-//			
-//			System.out.print("Key(j):        ");
-//			for (int i = 0; i < 64; i++) {
-//				System.out.print((theDES.getBoolKey()[i])?1:0);
-//			}
-//			System.out.println();
-//			
-//			System.out.print("Error:         ");
-//			for (int i = 0; i < 64; i++) {
-//				if (PT[i] != theDES.getBoolPlainText()[i]) {
-//					System.out.print(1);
-//					KErr++;
-//				} else {
-//					System.out.print(0);
-//				}
-//			}
-//			System.out.println("\n" + "Total Errors:  " + KErr + "\n");
-//			
-//			System.out.print("Ciphertext(b): ");
-//			for (int i = 0; i < 64; i++) {
-//				System.out.print((CT[i])?1:0);
-//			}
-//			System.out.println();
-//			
-//			System.out.print("Ciphertext(j): ");
-//			for (int i = 0; i < 64; i++) {
-//				System.out.print((theDES.getBoolCipherText()[i])?1:0);
-//			}
-//			System.out.println();
-//			
-//			System.out.print("Error:         ");
-//			for (int i = 0; i < 64; i++) {
-//				if (CT[i] != theDES.getBoolCipherText()[i]) {
-//					System.out.print(1);
-//					CTErr++;
-//				} else {
-//					System.out.print(0);
-//				}
-//			}
-//			System.out.println("\n" + "Total Errors:  " + CTErr + "\n");
+			System.out.println("Expected CT: da02ce3a89ecac3b");
+			System.out.println();
 		} catch (Exception e) {
-			System.out.println("Something went wrong: " + e);
+			System.out.println("Could not initialize encrypter: " + e);
 		}
+		
+		try {
+			DES decrypter = new DES(CT, K, true);
+			decrypter.Decrypt();
+
+			System.out.println("Cipher Text: " + decrypter.getCipherTextString());
+			System.out.println("Key Text:    " + decrypter.getKeyString());
+			System.out.println("Plain Text:  " + decrypter.getPlainTextString());
+			System.out.println("Expected PT: 02468aceeca86420");
+			System.out.println();
+		} catch (Exception e) {
+			System.out.println("Could not initialize decrypter: " + e);
+		}
+		
 	}
 
 }
