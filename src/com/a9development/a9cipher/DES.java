@@ -126,7 +126,6 @@ public class DES implements Cloneable {
 			CipherText = new byte[8];
 			BoolPlainText = new boolean[64];
 			BoolKey = new boolean[64];
-			BoolCipherText = new boolean[64];
 			unencrypted = true;
 			
 			boolean[] tmpPT = new boolean[8];
@@ -139,6 +138,7 @@ public class DES implements Cloneable {
 					BoolKey[(8*i)+j] = tmpK[j];
 				}
 			}
+			BoolCipherText = BoolPlainText.clone();
 			BoolTempText = BoolPlainText.clone();
 		}
 	}
@@ -151,7 +151,7 @@ public class DES implements Cloneable {
 		} else {
 			BoolPlainText = toEncrypt.clone();
 			BoolKey = DESKey.clone();
-			BoolCipherText = new boolean[64];
+			BoolCipherText = BoolPlainText.clone();
 			BoolTempText = BoolPlainText.clone();
 			CipherText = new byte[8];
 			unencrypted = true;
@@ -169,14 +169,19 @@ public class DES implements Cloneable {
 	}
 	
 	private void buildCipherText() {
-//		if (unencrypted) {
-//			Encrypt();
-//		}
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				CipherText[7-i] += ((BoolCipherText[(8*i)+j])?1:0) * Math.pow(2, 7-j);
+				CipherText[i] += ((BoolCipherText[(8*i)+j])?1:0) * Math.pow(2, 7-j);
 			}
 		}
+	}
+	
+	public String getCipherTextString() {
+		String CTString = "";
+		for (int i = 0; i < 8; i++) {
+			CTString += Integer.toString((CipherText[i] & 0xff) + 0x100, 16).substring(1);
+		}
+		return CTString;
 	}
 	
 	private boolean[] convertToBits(byte B) {
@@ -189,16 +194,16 @@ public class DES implements Cloneable {
 		
 	private void doInitialPermutation() {
 		for (int i = 0; i < 64; i++) {
-			BoolCipherText[i] = BoolTempText[IP[i]-1];
+			BoolTempText[i] = BoolCipherText[IP[i]-1];
 		}
-		BoolTempText = BoolCipherText;
+		BoolCipherText = BoolTempText.clone();
 	}
 	
 	private void doInverseInitialPermutation() {
 		for (int i = 0; i < 64; i++) {
-			BoolCipherText[i] = BoolTempText[InverseIP[i]-1];
+			BoolTempText[i] = BoolCipherText[InverseIP[i]-1];
 		}
-		BoolCipherText = BoolTempText;
+		BoolCipherText = BoolTempText.clone();
 	}
 	
 	private void doRounds() {
@@ -217,13 +222,13 @@ public class DES implements Cloneable {
 			}
 		}
 		
-		L[17] = R[16];
-		R[17] = L[16];
+		L[17] = R[16].clone();
+		R[17] = L[16].clone();
 		for (int i = 0; i < 32; i++) {
-			BoolCipherText[i] = L[17][i];
-			BoolCipherText[i+32] = R[17][i];
+			BoolTempText[i] = L[17][i];
+			BoolTempText[i+32] = R[17][i];
 		}
-		BoolTempText = BoolCipherText;
+		BoolCipherText = BoolTempText.clone();
 	}
 
 	private boolean[] F(boolean[] input, boolean[] Keyi) {
@@ -326,16 +331,16 @@ public class DES implements Cloneable {
 		Key = key;
 	}
 
-	public boolean[] getBoolPlainText() {
-		return BoolPlainText;
-	}
-
-	public boolean[] getBoolCipherText() {
-		return BoolCipherText;
-	}
-
-	public boolean[] getBoolKey() {
-		return BoolKey;
-	}
+//	public boolean[] getBoolPlainText() {
+//		return BoolPlainText;
+//	}
+//
+//	public boolean[] getBoolCipherText() {
+//		return BoolCipherText;
+//	}
+//
+//	public boolean[] getBoolKey() {
+//		return BoolKey;
+//	}
 	
 }
