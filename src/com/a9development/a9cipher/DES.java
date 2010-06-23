@@ -119,7 +119,7 @@ public class DES implements Cloneable {
 			BoolPlainText = new boolean[64];
 			BoolKey = new boolean[64];
 			BoolCipherText = new boolean[64];
-			unencrypted = false;
+			unencrypted = true;
 			
 			boolean[] tmpPT = new boolean[8];
 			boolean[] tmpK = new boolean[8];
@@ -146,7 +146,7 @@ public class DES implements Cloneable {
 			BoolCipherText = new boolean[64];
 			BoolTempText = BoolPlainText.clone();
 			CipherText = new byte[8];
-			unencrypted = false;
+			unencrypted = true;
 		}
 	}
 	
@@ -161,9 +161,9 @@ public class DES implements Cloneable {
 	}
 	
 	private void buildCipherText() {
-		if (unencrypted) {
-			Encrypt();
-		}
+//		if (unencrypted) {
+//			Encrypt();
+//		}
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				CipherText[7-i] += ((BoolCipherText[(8*i)+j])?1:0) * Math.pow(2, 7-j);
@@ -183,14 +183,14 @@ public class DES implements Cloneable {
 		for (int i = 0; i < 64; i++) {
 			BoolCipherText[i] = BoolTempText[IP[i]-1];
 		}
-		BoolTempText = BoolCipherText.clone();
+		BoolTempText = BoolCipherText;
 	}
 	
 	private void doInverseInitialPermutation() {
 		for (int i = 0; i < 64; i++) {
 			BoolCipherText[i] = BoolTempText[InverseIP[i]-1];
 		}
-		BoolCipherText = BoolTempText.clone();
+		BoolCipherText = BoolTempText;
 	}
 	
 	private void doRounds() {
@@ -198,8 +198,8 @@ public class DES implements Cloneable {
 		R = new boolean[18][32];
 		
 		for (int i = 0; i < 32; i++) {
-			L[0][i] = BoolCipherText[i];
-			R[0][i] = BoolCipherText[32+i];
+			L[0][i] = BoolTempText[i];
+			R[0][i] = BoolTempText[32+i];
 		}
 		
 		for (int i = 1; i < 17; i++) {
@@ -215,6 +215,7 @@ public class DES implements Cloneable {
 			BoolCipherText[i] = L[17][i];
 			BoolCipherText[i+32] = R[17][i];
 		}
+		BoolTempText = BoolCipherText;
 	}
 
 	private boolean[] F(boolean[] input, boolean[] Keyi) {

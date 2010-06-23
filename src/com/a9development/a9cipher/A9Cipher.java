@@ -22,6 +22,10 @@ public class A9Cipher {
 			DES theDES = new DES(PT, K);
 			theDES.Encrypt();
 			
+			int PTErr = 0;
+			int KErr = 0;
+			int CTErr = 0;
+			
 			System.out.print("Plaintext(b):  ");
 			for (int i = 0; i < 64; i++) {
 				System.out.print((PT[i])?1:0);
@@ -34,6 +38,17 @@ public class A9Cipher {
 			}
 			System.out.println();
 			
+			System.out.print("Error:         ");
+			for (int i = 0; i < 64; i++) {
+				if (PT[i] != theDES.getBoolPlainText()[i]) {
+					System.out.print(1);
+					PTErr++;
+				} else {
+					System.out.print(0);
+				}
+			}
+			System.out.println("\n" + "Total Errors:  " + PTErr + "\n");
+			
 			System.out.print("Key(b):        ");
 			for (int i = 0; i < 64; i++) {
 				System.out.print((K[i])?1:0);
@@ -45,7 +60,18 @@ public class A9Cipher {
 				System.out.print((theDES.getBoolKey()[i])?1:0);
 			}
 			System.out.println();
-						
+			
+			System.out.print("Error:         ");
+			for (int i = 0; i < 64; i++) {
+				if (PT[i] != theDES.getBoolPlainText()[i]) {
+					System.out.print(1);
+					KErr++;
+				} else {
+					System.out.print(0);
+				}
+			}
+			System.out.println("\n" + "Total Errors:  " + KErr + "\n");
+			
 			System.out.print("Ciphertext(b): ");
 			for (int i = 0; i < 64; i++) {
 				System.out.print((CT[i])?1:0);
@@ -58,6 +84,16 @@ public class A9Cipher {
 			}
 			System.out.println();
 			
+			System.out.print("Error:         ");
+			for (int i = 0; i < 64; i++) {
+				if (CT[i] != theDES.getBoolCipherText()[i]) {
+					System.out.print(1);
+					CTErr++;
+				} else {
+					System.out.print(0);
+				}
+			}
+			System.out.println("\n" + "Total Errors:  " + CTErr + "\n");
 		} catch (Exception e) {
 			System.out.println("Something went wrong: " + e);
 		}
