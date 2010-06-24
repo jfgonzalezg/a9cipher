@@ -17,14 +17,29 @@
 
 package com.a9development.a9cipher;
 
+/**
+ * A class for working with the Data Encryption Standard, more commonly known
+ * as DES. It will accept a String, byte array, or boolean array as input to
+ * the constructor for the input text and key. Currently all inputs are
+ * restricted to the normal DES block size of 64 bits, 8 bytes, or 16 hex
+ * digits, but this will be expanded in future versions for to support larger
+ * and smaller text and smaller keys, by means of padding to the next 8 bytes.
+ * 
+ * @author Daniel Kotowski
+ * @version 1.0.0
+ * @see http://csrc.nist.gov/publications/fips/fips46-3.pdf
+ */
 public class DES implements Cloneable {
-	private byte[] desPlainText;
-	private byte[] desCipherText;
-	private byte[] desKey;
-	private boolean[] desBoolPlainText;
-	private boolean[] desBoolTempText;
-	private boolean[] desBoolCipherText;
-	private boolean[] desBoolKey;
+	private String desPlainTextString;
+	private String desCipherTextString;
+	private String desKeyString;
+	private byte[] desPlainTextBytes;
+	private byte[] desCipherTextBytes;
+	private byte[] desKeyBytes;
+	private boolean[] desPlainTextBits;
+	private boolean[] desTempTextBits;
+	private boolean[] desCipherTextBits;
+	private boolean[] desKeyBits;
 	private boolean[][] desKey56;
 	private boolean[][] desSubKeys;
 	private boolean[][] desLeftHalf;
@@ -115,145 +130,229 @@ public class DES implements Cloneable {
 		{7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8},
 		{2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11}}};
 
+	/**
+	 * Constructor
+	 * 
+	 * @param text			8 byte big-endian plaintext
+	 * @param key			8 byte big-endian encryption key
+	 * @throws Exception	if the plaintext or key are not the right size
+	 * 						(8 bytes)
+	 */
 	public DES(byte[] text, byte[] key) throws Exception {
+		// TODO rewrite to allow for plaintext of length other than 8 bytes (pad to nextt 8 bytes)
+		// TODO rewrite to allow for keys of length less than 8 bytes (pad to 8 - do not allow greater than 8 bytes)
+		// TODO initialize string, byte, and boolean arrays for PT, K, and CT
+		
 		if (text.length != 8) {
 			throw new Exception("Plain text must be 8 bytes long");
 		} else if (key.length != 8) {
 			throw new Exception("Key must be 8 bytes long");
 		} else {
-			desPlainText = text.clone();
-			desKey = key.clone();
-			desCipherText = new byte[8];
-			desBoolPlainText = new boolean[64];
-			desBoolKey = new boolean[64];
+			desPlainTextBytes = text.clone();
+			desKeyBytes = key.clone();
+			desCipherTextBytes = new byte[8];
+			desPlainTextBits = new boolean[64];
+			desKeyBits = new boolean[64];
 			unencrypted = true;
 			
 			boolean[] tmpDesPlainText = new boolean[8];
 			boolean[] tmpDesKey = new boolean[8];
 			for (int i = 0; i < 8; i++) {
-				tmpDesPlainText = convertToBits(desPlainText[i]);
-				tmpDesKey = convertToBits(desKey[i]);
+				tmpDesPlainText = convertToBits(desPlainTextBytes[i]);
+				tmpDesKey = convertToBits(desKeyBytes[i]);
 				for (int j = 0; j < 8; j++) {
-					desBoolPlainText[(8*i)+j] = tmpDesPlainText[j];
-					desBoolKey[(8*i)+j] = tmpDesKey[j];
+					desPlainTextBits[(8*i)+j] = tmpDesPlainText[j];
+					desKeyBits[(8*i)+j] = tmpDesKey[j];
 				}
 			}
-			desBoolCipherText = desBoolPlainText.clone();
-			desBoolTempText = desBoolPlainText.clone();
+			desCipherTextBits = desPlainTextBits.clone();
+			desTempTextBits = desPlainTextBits.clone();
 		}
 	}
 	
+	/**
+	 * Constructor
+	 * 
+	 * @param text			64 bit plaintext as big-endian boolean array
+	 * @param key			64 bit encryption key as big-endian boolean array
+	 * @throws Exception	if the plaintext or key are not the right size
+	 * 						(64 bits)
+	 */
 	public DES(boolean[] text, boolean[] key) throws Exception {
+		// TODO rewrite to allow for plaintext of length other than 64 bits (pad to next 64 bits)
+		// TODO rewrite to allow for keys of length less than 64 bits (pad to 64 - do not allow greater than 64 bits)
+		// TODO initialize string, byte, and boolean arrays for PT, K, and CT
+		
 		if (text.length != 64) {
 			throw new Exception("Plain text must be 64 bits");
 		} else if (key.length != 64) {
 			throw new Exception("Key must be 64 bits");
 		} else {
-			desBoolPlainText = text.clone();
-			desBoolKey = key.clone();
-			desBoolCipherText = desBoolPlainText.clone();
-			desBoolTempText = desBoolPlainText.clone();
-			desCipherText = new byte[8];
+			desPlainTextBits = text.clone();
+			desKeyBits = key.clone();
+			desCipherTextBits = desPlainTextBits.clone();
+			desTempTextBits = desPlainTextBits.clone();
+			desCipherTextBytes = new byte[8];
 			unencrypted = true;
 		}
 	}
 	
+	/**
+	 * Constructor
+	 * 
+	 * @param text			8 byte big-endian text,
+	 * 						can be plaintext or ciphertext
+	 * @param key			8 byte big-endian encryption key
+	 * @param encrypted		is the text already encrypted?
+	 * @throws Exception	if the text or key are not the right size
+	 * 						(8 bytes)
+	 */
 	public DES(byte[] text, byte[] key, boolean encrypted) throws Exception {
+		// TODO rewrite to allow for plaintext of length other than 64 bits (pad to next 64 bits)
+		// TODO rewrite to allow for keys of length less than 64 bits (pad to 64 - do not allow greater than 64 bits)
+		// TODO initialize string, byte, and boolean arrays for PT, K, and CT
+		
 		if (text.length != 8) {
 			throw new Exception("Plain text must be 8 bytes long");
 		} else if (key.length != 8) {
 			throw new Exception("Key must be 8 bytes long");
 		} else {
 			if (!encrypted) {
-				desPlainText = text.clone();
-				desKey = key.clone();
-				desCipherText = new byte[8];
-				desBoolPlainText = new boolean[64];
-				desBoolKey = new boolean[64];
+				desPlainTextBytes = text.clone();
+				desKeyBytes = key.clone();
+				desCipherTextBytes = new byte[8];
+				desPlainTextBits = new boolean[64];
+				desKeyBits = new boolean[64];
 				unencrypted = true;
 				
 				boolean[] tmpDesPlainText = new boolean[8];
 				boolean[] tmpDesKey = new boolean[8];
 				for (int i = 0; i < 8; i++) {
-					tmpDesPlainText = convertToBits(desPlainText[i]);
-					tmpDesKey = convertToBits(desKey[i]);
+					tmpDesPlainText = convertToBits(desPlainTextBytes[i]);
+					tmpDesKey = convertToBits(desKeyBytes[i]);
 					for (int j = 0; j < 8; j++) {
-						desBoolPlainText[(8*i)+j] = tmpDesPlainText[j];
-						desBoolKey[(8*i)+j] = tmpDesKey[j];
+						desPlainTextBits[(8*i)+j] = tmpDesPlainText[j];
+						desKeyBits[(8*i)+j] = tmpDesKey[j];
 					}
 				}
-				desBoolCipherText = desBoolPlainText.clone();
-				desBoolTempText = desBoolPlainText.clone();
+				desCipherTextBits = desPlainTextBits.clone();
+				desTempTextBits = desPlainTextBits.clone();
 			} else {
-				desCipherText = text.clone();
-				desKey = key.clone();
-				desPlainText = new byte[8];
-				desBoolCipherText = new boolean[64];
-				desBoolKey = new boolean[64];
+				desCipherTextBytes = text.clone();
+				desKeyBytes = key.clone();
+				desPlainTextBytes = new byte[8];
+				desCipherTextBits = new boolean[64];
+				desKeyBits = new boolean[64];
 				unencrypted = false;
 				
 				boolean[] tmpDesCipherText = new boolean[8];
 				boolean[] tmpDesKey = new boolean[8];
 				for (int i = 0; i < 8; i++) {
-					tmpDesCipherText = convertToBits(desCipherText[i]);
-					tmpDesKey = convertToBits(desKey[i]);
+					tmpDesCipherText = convertToBits(desCipherTextBytes[i]);
+					tmpDesKey = convertToBits(desKeyBytes[i]);
 					for (int j = 0; j < 8; j++) {
-						desBoolCipherText[(8*i)+j] = tmpDesCipherText[j];
-						desBoolKey[(8*i)+j] = tmpDesKey[j];
+						desCipherTextBits[(8*i)+j] = tmpDesCipherText[j];
+						desKeyBits[(8*i)+j] = tmpDesKey[j];
 					}
 				}
-				desBoolPlainText = desBoolCipherText.clone();
-				desBoolTempText = desBoolCipherText.clone();
+				desPlainTextBits = desCipherTextBits.clone();
+				desTempTextBits = desCipherTextBits.clone();
 			}
 		}
 	}
 	
+	/**
+	 * Constructor
+	 * 
+	 * @param text			64 bit text as big-endian boolean array
+	 * @param key			64 bit encryption key as big-endian boolean array
+	 * @param encrypted		is the text already encrypted?
+	 * @throws Exception	if the text or key are not the right size
+	 * 						(64 bits)
+	 */
 	public DES(boolean[] text, boolean[] key, boolean encrypted) throws Exception {
+		// TODO rewrite to allow for plaintext of length other than 64 bits (pad to next 64 bits)
+		// TODO rewrite to allow for keys of length less than 64 bits (pad to 64 - do not allow greater than 64 bits)
+		// TODO initialize string, byte, and boolean arrays for PT, K, and CT
+		
 		if (text.length != 64) {
 			throw new Exception("Plain text must be 64 bits long");
 		} else if (key.length != 64) {
 			throw new Exception("Key must be 64 bits long");
 		} else {
 			if (!encrypted) {
-				desBoolPlainText = text.clone();
-				desBoolKey = key.clone();
-				desBoolCipherText = desBoolPlainText.clone();
-				desBoolTempText = desBoolPlainText.clone();
-				desPlainText = new byte[8];
-				desCipherText = new byte[8];
+				desPlainTextBits = text.clone();
+				desKeyBits = key.clone();
+				desCipherTextBits = desPlainTextBits.clone();
+				desTempTextBits = desPlainTextBits.clone();
+				desPlainTextBytes = new byte[8];
+				desCipherTextBytes = new byte[8];
 				unencrypted = true;
 			} else {
-				desBoolCipherText = text.clone();
-				desBoolKey = key.clone();
-				desBoolPlainText = desBoolCipherText.clone();
-				desBoolTempText = desBoolCipherText.clone();
-				desPlainText = new byte[8];
-				desCipherText = new byte[8];
+				desCipherTextBits = text.clone();
+				desKeyBits = key.clone();
+				desPlainTextBits = desCipherTextBits.clone();
+				desTempTextBits = desCipherTextBits.clone();
+				desPlainTextBytes = new byte[8];
+				desCipherTextBytes = new byte[8];
 				unencrypted = true;
 			}
 		}
 	}
-		
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param text			plaintext as string
+	 * 						must be hex representation
+	 * @param key			key as string, 
+	 * 						must be hex representation
+	 * @throws Exception	if text or key are no the right size
+	 * 						(16 characters)
+	 */
+	public DES(String text, String key) throws Exception {
+		// TODO initialize from strings
+	}
+	
+	/**
+	 * Constructor 
+	 * @param text			text as string, can be plaintext or ciphertext,
+	 * 						must be hex representation
+	 * @param key			key as string,
+	 * 						must be hex representation
+	 * @param encrypted		is the text already encrypted?
+	 * @throws Exception	if the text or key are not the right size
+	 * 						(16 characters)
+	 */
+	public DES(String text, String key, boolean encrypted) throws Exception {
+		// TODO initialize from strings
+	}
+	
+	/**
+	 * Encrypts the stored plaintext using the DES algorithm
+	 * 
+	 * @throws Exception
+	 */
 	public void Encrypt() throws Exception {
-		if (unencrypted) {		
+		if (unencrypted) {
 			try {
-				desBoolTempText = doInitialPermutation(desBoolPlainText);
+				desTempTextBits = doInitialPermutation(desPlainTextBits);
 			} catch (Exception e) {
 				throw e;
 			}
 			makeSubKeys();
 			try {
-				desBoolTempText = doEncryptionRounds(desBoolTempText);
+				desTempTextBits = doEncryptionRounds(desTempTextBits);
 			} catch (Exception e) {
 				throw e;
 			}
 			try {
-				desBoolTempText = doInverseInitialPermutation(desBoolTempText);
+				desTempTextBits = doInverseInitialPermutation(desTempTextBits);
 			} catch (Exception e) {
 				throw e;
 			}
 			try {
-				desBoolCipherText = desBoolTempText;
+				desCipherTextBits = desTempTextBits;
 			} catch (Exception e) {
 				throw e;
 			}
@@ -265,26 +364,31 @@ public class DES implements Cloneable {
 		}
 	}
 	
+	/**
+	 * Decrypts the stored ciphertext using the DES algorithm
+	 * 
+	 * @throws Exception
+	 */
 	public void Decrypt() throws Exception {
 		if (!unencrypted) {
 			try {
-				desBoolTempText = doInitialPermutation(desBoolCipherText);
+				desTempTextBits = doInitialPermutation(desCipherTextBits);
 			} catch (Exception e) {
 				throw e;
 			}
 			makeSubKeys();
 			try {
-				desBoolTempText = doDecryptionRounds(desBoolTempText);
+				desTempTextBits = doDecryptionRounds(desTempTextBits);
 			} catch (Exception e) {
 				throw e;
 			}
 			try {
-				desBoolTempText = doInverseInitialPermutation(desBoolTempText);
+				desTempTextBits = doInverseInitialPermutation(desTempTextBits);
 			} catch (Exception e) {
 				throw e;
 			}
 			try {
-				desBoolPlainText = desBoolTempText;
+				desPlainTextBits = desTempTextBits;
 			} catch (Exception e) {
 				throw e;
 			}
@@ -296,22 +400,37 @@ public class DES implements Cloneable {
 		}
 	}
 
+	/**
+	 * Takes the stored ciphertext bits and builds the ciphertext string and
+	 * byte array
+	 */
 	private void buildCipherText() {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				desCipherText[i] += ((desBoolCipherText[(8*i)+j])?1:0) * Math.pow(2, 7-j);
+				desCipherTextBytes[i] += ((desCipherTextBits[(8*i)+j])?1:0) * Math.pow(2, 7-j);
 			}
 		}
+		// TODO build the ciphertext string
 	}
 	
+	/**
+	 * Takes the stored plaintext bits and builds the plaintext string and
+	 * byte array
+	 */
 	private void buildPlainText() {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				desPlainText[i] += ((desBoolPlainText[(8*i)+j])?1:0) * Math.pow(2, 7-j);
+				desPlainTextBytes[i] += ((desPlainTextBits[(8*i)+j])?1:0) * Math.pow(2, 7-j);
 			}
 		}
+		// TODO build the plaintext string
 	}
 
+	/**
+	 * Converts a byte into a big-endian boolean array
+	 * @param B		the byte to be converted
+	 * @return		a big-endian boolean array representing the bits of byte B
+	 */
 	private boolean[] convertToBits(byte B) {
 		boolean[] bits = new boolean[8];
 		for (int i = 0; i < 8; i++) {
@@ -320,6 +439,13 @@ public class DES implements Cloneable {
 		return bits;
 	}
 		
+	/**
+	 * Permutes a big-endian bit array using the DES Initial Permutation
+	 * 
+	 * @param toPermute		bit array to be permuted
+	 * @return				permuted bit array
+	 * @throws Exception	if the array input is not 64 bits
+	 */
 	private boolean[] doInitialPermutation(boolean[] toPermute) throws Exception {
 		if (toPermute.length < 64) {
 			throw new Exception("Cannot do Initial Permutation on less than 64 bits");
@@ -334,6 +460,14 @@ public class DES implements Cloneable {
 		}
 	}
 	
+	/**
+	 * Permutes a big-endian bit array using the DES Inverse Initial
+	 * Permutation
+	 * 
+	 * @param toPermute		bit array to be permuted
+	 * @return				permuted bit array
+	 * @throws Exception	if the array input is not 64 bits
+	 */
 	private boolean[] doInverseInitialPermutation(boolean[] toPermute) throws Exception {
 		if (toPermute.length < 64) {
 			throw new Exception("Cannot do Initial Permutation on less than 64 bits");
@@ -348,8 +482,16 @@ public class DES implements Cloneable {
 		}
 	}
 	
-	// TODO Rename doRoundsOnThis to something more meaningful
+	/**
+	 * Puts the intermediate text through all 16 DES encryption rounds
+	 * 
+	 * @param doRoundsOnThis	the bit array that the rounds are done on
+	 * @return					the bit array after the rounds have been done
+	 * @throws Exception		if the input array is not 64 bits
+	 */
 	private boolean[] doEncryptionRounds(boolean[] doRoundsOnThis) throws Exception {
+		// TODO Rename doRoundsOnThis to something more meaningful
+
 		if (doRoundsOnThis.length != 64) {
 			throw new Exception("doRoundOnThis must be 64 bits");
 		} else {
@@ -380,7 +522,16 @@ public class DES implements Cloneable {
 		}
 	}
 
+	/**
+	 * Puts the intermediate text through all 16 DES decryption rounds
+	 * 
+	 * @param doRoundsOnThis	the bit array that the rounds are done on
+	 * @return					the bit array after the rounds have been done
+	 * @throws Exception		if the input array is not 64 bits
+	 */
 	private boolean[] doDecryptionRounds(boolean[] doRoundsOnThis) throws Exception {
+		// TODO Rename doRoundsOnThis to something more meaningful
+
 		if (doRoundsOnThis.length != 64) {
 			throw new Exception("doRoundOnThis must be 64 bits");
 		} else {
@@ -411,6 +562,17 @@ public class DES implements Cloneable {
 		}
 	}
 
+	/**
+	 * The Feistel F function for the DES
+	 * 
+	 * @param input			the right half of the intermediate text,
+	 * 						named R_i in the FIPS publication FIPS 46-3
+	 * @param desSubKeyI	the subkey for use in the Feistel F function,
+	 * 						named K_i in the FIPS publication FIPS 46-3
+	 * @return				the 32 bit big-endian array to XOR with L_i
+	 * @throws Exception	if the input intermediate text half is not 32 bits
+	 * 						or the subkey is not 48 bits
+	 */
 	private boolean[] F(boolean[] input, boolean[] desSubKeyI) throws Exception {
 		if (input.length != 32) {
 			throw new Exception("input to F() must be 32 bits");
@@ -427,6 +589,14 @@ public class DES implements Cloneable {
 		}
 	}
 
+	/**
+	 * Does the 8 S-Box table lookups described in the DES
+	 * 
+	 * @param theSBoxInput	the 8, 6 bit arrays for input to the DES S-Boxes as
+	 * 						a 48 bit big-endian array
+	 * @return				the 32 bit output from the DES S-Boxes
+	 * @throws Exception	if the input is not 48 bits
+	 */
 	private boolean[] SBoxMath(boolean[] theSBoxInput) throws Exception {
 		if (theSBoxInput.length != 48) {
 			throw new Exception("SBoxInput must be 48 bits");
@@ -452,6 +622,13 @@ public class DES implements Cloneable {
 		}
 	}
 
+	/**
+	 * Permutes a 32 bit big-endian array using the DES permutation P.
+	 * This step is done after the S-Box table lookup
+	 * 
+	 * @param toPermute		the 32 bit big-endian array to permute
+	 * @return				the permuted array
+	 */
 	private boolean[] PermutationP(boolean[] toPermute) {
 		boolean[] permuted = new boolean[32];
 		for (int i = 0; i < 32; i++) {
@@ -460,6 +637,12 @@ public class DES implements Cloneable {
 		return permuted;
 	}
 
+	/**
+	 * Expands a 32 bit big-endian array using the DES expansion permutation
+	 * 
+	 * @param toExpand		the 32 bit big-endian array to expand
+	 * @return				the 48 bit big-endian expanded array
+	 */
 	private boolean[] Expand(boolean[] toExpand) {
 		boolean[] tmp = new boolean[48];
 		for (int i = 0; i < 48; i++) {
@@ -468,6 +651,9 @@ public class DES implements Cloneable {
 		return tmp;
 	}
 
+	/**
+	 * Builds an array containing all 16 DES subkeys
+	 */
 	private void makeSubKeys() {
 		desSubKeys = new boolean[16][48];
 		desKey56 = new boolean[17][56];
@@ -475,7 +661,7 @@ public class DES implements Cloneable {
 		desD = new boolean[17][28];
 		
 		for (int i = 0; i < 56; i++) {
-			desKey56[0][i] = desBoolKey[desPC1[i]-1]; 
+			desKey56[0][i] = desKeyBits[desPC1[i]-1]; 
 		}
 		
 		for (int i = 0; i < 28; i++) {
@@ -497,52 +683,91 @@ public class DES implements Cloneable {
 		}
 	}
 	
+	/**
+	 * Creates a string containing the hex representation of the plaintext
+	 * 
+	 * @return	a string containing the hex representation of the plaintext
+	 */
 	public String getPlainTextString() {
 		String PTString = "";
 		for (int i = 0; i < 8; i++) {
-			PTString += Integer.toString((desPlainText[i] & 0xff) + 0x100, 16).substring(1);
+			PTString += Integer.toString((desPlainTextBytes[i] & 0xff) + 0x100, 16).substring(1);
 		}
 		return PTString;
 	}
 
+	/**
+	 * Creates a string containing the hex representation of the key
+	 * 
+	 * @return	a string containing the hex representation of the key
+	 */
 	public String getKeyString() {
 		String KString = "";
 		for (int i = 0; i < 8; i++) {
-			KString += Integer.toString((desKey[i] & 0xff) + 0x100, 16).substring(1);
+			KString += Integer.toString((desKeyBytes[i] & 0xff) + 0x100, 16).substring(1);
 		}
 		return KString;
 	}
 	
+	/**
+	 * Creates a string containing the hex representation of the ciphertext
+	 * 
+	 * @return	a string containing the hex representation of the ciphertext
+	 */
 	public String getCipherTextString() {
 		String CTString = "";
 		for (int i = 0; i < 8; i++) {
-			CTString += Integer.toString((desCipherText[i] & 0xff) + 0x100, 16).substring(1);
+			CTString += Integer.toString((desCipherTextBytes[i] & 0xff) + 0x100, 16).substring(1);
 		}
 		return CTString;
 	}
 
-	public byte[] getPlainText() {
-		return desPlainText;
+	/**
+	 * 
+	 * @return				8 byte plaintext array
+	 */
+	public byte[] getPlainTextBytes() {
+		return desPlainTextBytes;
 	}
 
-	public void setPlainText(byte[] plainText) {
-		desPlainText = plainText;
+	/**
+	 * 
+	 * @param plaintext		8 byte plaintext array
+	 */
+	public void setPlainTextBytes(byte[] plainText) {
+		desPlainTextBytes = plainText;
 	}
 
-	public byte[] getCipherText() {
-		return desCipherText;
+	/**
+	 * 
+	 * @return				8 byte ciphertext array
+	 */
+	public byte[] getCipherTextBytes() {
+		return desCipherTextBytes;
 	}
 
-	public void setCipherText(byte[] cipherText) {
-		desCipherText = cipherText;
+	/**
+	 * 
+	 * @param cipherText	8 byte ciphertext array
+	 */
+	public void setCipherTextBytes(byte[] cipherText) {
+		desCipherTextBytes = cipherText;
 	}
 
-	public byte[] getKey() {
-		return desKey;
+	/**
+	 * 
+	 * @return				8 byte key array
+	 */
+	public byte[] getKeyBytes() {
+		return desKeyBytes;
 	}
 
-	public void setKey(byte[] key) {
-		desKey = key;
+	/**
+	 * 
+	 * @param key			8 byte key array
+	 */
+	public void setKeyBytes(byte[] key) {
+		desKeyBytes = key;
 	}
 
 }
