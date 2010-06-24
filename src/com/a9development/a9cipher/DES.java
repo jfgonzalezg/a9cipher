@@ -27,7 +27,6 @@ package com.a9development.a9cipher;
  * 
  * @author Daniel Kotowski
  * @version 1.0.0
- * @see http://csrc.nist.gov/publications/fips/fips46-3.pdf
  */
 public class DES implements Cloneable {
 	private String desPlainTextString;
@@ -732,7 +731,7 @@ public class DES implements Cloneable {
 
 	/**
 	 * 
-	 * @param plaintext		8 byte plaintext array
+	 * @param plainText		8 byte plaintext array
 	 */
 	public void setPlainTextBytes(byte[] plainText) {
 		desPlainTextBytes = plainText;
