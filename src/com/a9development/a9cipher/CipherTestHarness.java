@@ -21,11 +21,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class A9Cipher {
+public class CipherTestHarness {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
 		System.out.print("Enter 16-digit hex plaintext: ");
@@ -56,11 +53,22 @@ public class A9Cipher {
 					byteKey[i/2] = (byte) ((Character.digit(userKey.charAt(i), 16) << 4) + Character.digit(userKey.charAt(i+1), 16));
 				}
 				try {
-					DES theDES = new DES(bytePlainText, byteKey);
-					theDES.Encrypt();
+					DESCipher newDES = new DESCipher(byteKey);
+					byte[] CTBytes = newDES.encrypt(bytePlainText);
+					byte[] PTBytes = newDES.decrypt(CTBytes);
+					
+					String CTString = "";
+					String PTString = "";
+					for (int i = 0; i < 8; i++) {
+						CTString += Integer.toString((CTBytes[i] & 0xff) + 0x100, 16).substring(1);
+						PTString += Integer.toString((PTBytes[i] & 0xff) + 0x100, 16).substring(1);
+					}
+					
 					System.out.println("Plaintext:  " + userPlainText);
 					System.out.println("Key:        " + userKey);
-					System.out.println("Ciphertext: " + theDES.getCipherTextString());
+					System.out.println("Ciphertext: " + CTString);
+					System.out.println("Backtext:   " + PTString);
+					
 				} catch (Exception e) {
 					System.out.println(e);
 				}
