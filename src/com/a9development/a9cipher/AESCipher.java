@@ -51,82 +51,82 @@ public class AESCipher implements Cloneable {
 		}
 	}
 
-	private byte[] aesSubBytes (byte[] B) throws Exception {
-		if (B.length != 16) {
-			throw new Exception("B must be 16 bytes long");
+	private byte[][] aesSubBytes (byte[][] B) throws Exception {
+		if (B.length != 4 || B[0].length != 4) {
+			throw new Exception("B must be 4x4 bytes");
 		} else {
-			byte[] subbed = new byte[16];
+			byte[][] subbed = new byte[4][4];
 			//TODO SubByes
 			
 			return subbed;
 		}
 	}
 	
-	private byte[] aesInverseSubBytes (byte[] B) throws Exception {
-		if (B.length != 16) {
-			throw new Exception("B must be 16 bytes long");
+	private byte[][] aesInverseSubBytes (byte[][] B) throws Exception {
+		if (B.length != 4 || B[0].length != 4) {
+			throw new Exception("B must be 4x4 bytes");
 		} else {
-			byte[] subbed = new byte[16];
+			byte[][] subbed = new byte[4][4];
 			//TODO Inverse SubByes
 			
 			return subbed;
 		}
 	}
 	
-	private byte[] aesShiftRows (byte[] B) throws Exception {
-		if (B.length != 16) {
-			throw new Exception("B must be 16 bytes long");
+	private byte[][] aesShiftRows (byte[][] B) throws Exception {
+		if (B.length != 4 || B[0].length != 4) {
+			throw new Exception("B must be 4x4 bytes");
 		} else {
-			byte[] shifted = new byte[16];
+			byte[][] shifted = new byte[4][4];
 			//TODO ShiftRows
 			
 			return shifted;
 		}
 	}
 	
-	private byte[] aesInverseShiftRows (byte[] B) throws Exception {
-		if (B.length != 16) {
-			throw new Exception("B must be 16 bytes long");
+	private byte[][] aesInverseShiftRows (byte[][] B) throws Exception {
+		if (B.length != 4 || B[0].length != 4) {
+			throw new Exception("B must be 4x4 bytes");
 		} else {
-			byte[] shifted = new byte[16];
+			byte[][] shifted = new byte[4][4];
 			//TODO Inverse ShiftRows
 			
 			return shifted;
 		}
 	}
 	
-	private byte[] aesMixColumns (byte[] B) throws Exception {
-		if (B.length != 16) {
-			throw new Exception("B must be 16 bytes long");
+	private byte[][] aesMixColumns (byte[][] B) throws Exception {
+		if (B.length != 4 || B[0].length != 4) {
+			throw new Exception("B must be 4x4 bytes");
 		} else {
-			byte[] mixed = new byte[16];
+			byte[][] mixed = new byte[4][4];
 			//TODO MixColumns
 			
 			return mixed;
 		}
 	}
 	
-	private byte[] aesInverseMixColumns (byte[] B) throws Exception {
-		if (B.length != 16) {
-			throw new Exception("B must be 16 bytes long");
+	private byte[][] aesInverseMixColumns (byte[][] B) throws Exception {
+		if (B.length != 4 || B[0].length != 4) {
+			throw new Exception("B must be 4x4 bytes");
 		} else {
-			byte[] mixed = new byte[16];
+			byte[][] mixed = new byte[4][4];
 			//TODO Inverse MixColumns
 			
 			return mixed;
 		}
 	}
 	
-	private byte[] aesAddRoundKey (byte[] B, byte[] roundKey) throws Exception {
-		if (B.length != 16) {
-			throw new Exception("B must be 16 bytes long");
-		} else if (roundKey.length != 16) {
-			throw new Exception("roundKey must be 16 bytes long");
+	private byte[][] aesAddRoundKey (byte[][] B, byte[][] roundKey) throws Exception {
+		if (B.length != 4 || B[0].length != 4) {
+			throw new Exception("B must be 4x4 bytes");
+		} else if (roundKey.length != 4 || roundKey[0].length != 4) {
+			throw new Exception("roundKey must be 4x4 bytes");
 		} else {
-			byte[] shifted = new byte[16];
+			byte[][] keyed = new byte[4][4];
 			//TODO ShiftRows
 			
-			return shifted;
+			return keyed;
 		}
 	}
 	
