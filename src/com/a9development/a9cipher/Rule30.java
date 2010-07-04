@@ -17,16 +17,18 @@ public class Rule30 implements Serializable {
 	}
 	
 	protected synchronized long next(int bits) {
-		boolean[] currentState = longToBits(seed);
+		boolean[] currentState = new boolean[66];
 		boolean[] updatedState = new boolean[64];
-		
-		for (int i = 0; i < 62; i++) {
+		for (int i = 1; i < 65; i++) {
+			currentState[i] = longToBits(seed)[i-1];
+		}
+		for (int i = 1; i < 65; i++) {
 			if ((currentState[i-1] && !currentState[i] && !currentState[i+1])
 					|| (!currentState[i-1] && currentState[i] && currentState[i+1])
 					|| (!currentState[i-1] && currentState[i] && !currentState[i+1])
 					|| (!currentState[i-1] && !currentState[i] && currentState[i+1])) {
-				updatedState[i] = true;
-			} else { updatedState[i] = false; }
+				updatedState[i-1] = true;
+			} else { updatedState[i-1] = false; }
 		}
 		try {
 			seed = bitsToLong(updatedState);
