@@ -18,13 +18,6 @@
 package com.a9development.a9cipher;
 
 /**
- * A class for working with the Data Encryption Standard, more commonly known
- * as DES. It will accept a String, byte array, or boolean array as input to
- * the constructor for the input text and key. Currently all inputs are
- * restricted to the normal DES block size of 64 bits, 8 bytes, or 16 hex
- * digits, but this will be expanded in future versions for to support larger
- * and smaller text and smaller keys, by means of padding to the next 8 bytes.
- * 
  * The textbook being used gave this example:<br>
  * Plaintext:  02468aceeca86420<br>
  * Key:        0f1571c947d9e859<br>

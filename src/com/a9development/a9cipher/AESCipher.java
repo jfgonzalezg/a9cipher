@@ -17,6 +17,16 @@
 
 package com.a9development.a9cipher;
 
+/**
+ * The textbook being used gave this example:<br>
+ * Plaintext:  0123456789abcdeffedcba9876543210<br>
+ * Key:        0f1571c947d9e8590cb7add6af7f6798<br>
+ * Ciphertext: ff0b844a0853bf7c6934ab4364148fb9
+ * 
+ * @author Daniel Kotowski
+ * @version 1.0.0
+ */
+
 public class AESCipher implements Cloneable {
 	private byte[] aesKey;
 	
@@ -54,10 +64,11 @@ public class AESCipher implements Cloneable {
 		{(byte) 0x60, (byte) 0x51, (byte) 0x7f, (byte) 0xa9, (byte) 0x19, (byte) 0xb5, (byte) 0x4a, (byte) 0x0d, (byte) 0x2d, (byte) 0xe5, (byte) 0x7a, (byte) 0x9f, (byte) 0x93, (byte) 0xc9, (byte) 0x9c, (byte) 0xef},
 		{(byte) 0xa0, (byte) 0xe0, (byte) 0x3b, (byte) 0x4d, (byte) 0xae, (byte) 0x2a, (byte) 0xf5, (byte) 0xb0, (byte) 0xc8, (byte) 0xeb, (byte) 0xbb, (byte) 0x3c, (byte) 0x83, (byte) 0x53, (byte) 0x99, (byte) 0x61},
 		{(byte) 0x17, (byte) 0x2b, (byte) 0x04, (byte) 0x7e, (byte) 0xba, (byte) 0x77, (byte) 0xd6, (byte) 0x26, (byte) 0xe1, (byte) 0x69, (byte) 0x14, (byte) 0x63, (byte) 0x55, (byte) 0x21, (byte) 0x0c, (byte) 0x7d}};
+	private byte[] aesRcon = {(byte) 0x01, (byte) 0x02, (byte) 0x04, (byte) 0x08, (byte) 0x10, (byte) 0x20, (byte) 0x40, (byte) 0x80, (byte) 0x1b, (byte) 0x36};
 	
 	public AESCipher(byte[] key) throws Exception {
 		if (key.length != 16) {
-			// Currently only supports 128-bit keys. Will be expaned in a future version
+			// Currently only supports 128-bit keys. Will be expanded in a future version
 			throw new Exception("Key must be 16, 24, or 32 bytes long");
 		} else {
 			aesKey = key.clone();
@@ -69,8 +80,30 @@ public class AESCipher implements Cloneable {
 			throw new Exception("plaintext must be 16 bytes long");
 		} else {
 			byte[] ciphertext = new byte[16];
-			//TODO encrypt plaintext
-			
+			byte[][] ctMatrix = new byte[4][4];
+			byte[][] ptMatrix = new byte[4][4];
+			for (int i = 0; i < 4; i++) {
+				ptMatrix[i][0] = plaintext[4*i];
+				ptMatrix[i][1] = plaintext[4*i + 1];
+				ptMatrix[i][2] = plaintext[4*i + 2];
+				ptMatrix[i][3] = plaintext[4*i + 3];
+			}
+			byte[][][] aesRKeys = aesMakeRoundKeys(aesKey);
+			ctMatrix = aesAddRoundKey(ptMatrix, aesRKeys[0]);
+			for (int i = 1; i < 10; i++) {
+//				ctMatrix = aesAddRoundKey(aesMixColumns(aesShiftRows(aesSubBytes(ctMatrix))), aesRKeys[i]);
+				ctMatrix = aesSubBytes(ctMatrix);
+				ctMatrix = aesShiftRows(ctMatrix);
+				ctMatrix = aesMixColumns(ctMatrix);
+				ctMatrix = aesAddRoundKey(ctMatrix, aesRKeys[i]);
+			}
+			ctMatrix = aesAddRoundKey(aesShiftRows(aesSubBytes(ctMatrix)), aesRKeys[10]);
+			for (int i = 0; i < 4; i++) {
+				ciphertext[i] = ctMatrix[i][0];
+				ciphertext[i+1] = ctMatrix[i][1];
+				ciphertext[i+2] = ctMatrix[i][2];
+				ciphertext[i+3] = ctMatrix[i][3];
+			}
 			return ciphertext;
 		}
 	}
@@ -80,8 +113,26 @@ public class AESCipher implements Cloneable {
 			throw new Exception("ciphertext must be 16 bytes long");
 		} else {
 			byte[] plaintext = new byte[16];
-			//TODO decrypt ciphertext
-			
+			byte[][] ptMatrix = new byte[4][4];
+			byte[][] ctMatrix = new byte[4][4];
+			for (int i = 0; i < 4; i++) {
+				ctMatrix[i][0] = ciphertext[4*i];
+				ctMatrix[i][1] = ciphertext[4*i+1];
+				ctMatrix[i][2] = ciphertext[4*i+2];
+				ctMatrix[i][3] = ciphertext[4*i+3];
+			}
+			byte[][][] aesRKeys = aesMakeRoundKeys(aesKey);
+			ptMatrix = aesAddRoundKey(ctMatrix, aesRKeys[10]);
+			for (int i = 9; i > 0; i--) {
+				ptMatrix = aesInverseMixColumns(aesAddRoundKey(aesInverseSubBytes(aesInverseShiftRows(ptMatrix)), aesRKeys[i]));
+			}
+			ptMatrix = aesAddRoundKey(aesInverseSubBytes(aesInverseShiftRows(ptMatrix)), aesRKeys[0]);
+			for (int i = 0; i < 4; i++) {
+				plaintext[i] = ptMatrix[i][0];
+				plaintext[i+1] = ptMatrix[i][1];
+				plaintext[i+2] = ptMatrix[i][2];
+				plaintext[i+3] = ptMatrix[i][3];
+			}
 			return plaintext;
 		}
 	}
@@ -93,7 +144,10 @@ public class AESCipher implements Cloneable {
 			byte[][] subbed = new byte[4][4];
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 4; j++) {
-					subbed[i][j] = aesSBox[B[i][j] >> 4][B[i][j] % 16];
+					//TODO how is it even possible for r and c to be negative???
+					int r = B[i][j] >> 4;
+					int c = B[i][j] % 16;
+					subbed[i][j] = aesSBox[r][c];
 				}
 			}
 			return subbed;
@@ -188,6 +242,31 @@ public class AESCipher implements Cloneable {
 		}
 	}
 	
+	private byte[] aesSubWord(byte[] W) throws Exception {
+		if (W.length != 4) {
+			throw new Exception("W must be 4 bytes");
+		} else {
+			byte[] subbed = new byte[4];
+			for (int i = 0; i < 4; i++) {
+				subbed[i] = aesSBox[W[i] >> 4][W[i] % 16];
+			}
+			return subbed;
+		}
+	}
+	
+	private byte[] aesRotWord(byte[] W) throws Exception {
+		if (W.length != 4) {
+			throw new Exception("W must be 4 bytes");
+		} else {
+			byte[] rotted = new byte[4];
+			rotted[0] = W[1];
+			rotted[1] = W[2];
+			rotted[2] = W[3];
+			rotted[3] = W[0];
+			return rotted;
+		}
+	}
+	
 	private byte[][][] aesMakeRoundKeys (byte[] key) throws Exception {
 		if (key.length != 16) {
 			throw new Exception("key must be 16 bytes long");
@@ -198,10 +277,24 @@ public class AESCipher implements Cloneable {
 					aesRoundKeys[0][i][j] = key[4*i + j];
 				}
 			}
-			//TODO Make RoundKeys
+			byte[] temp = new byte[4];
+			for (int i = 4; i < 11; i++) {
+				for (int j = 0; j < 4; j++) {
+					temp = aesRoundKeys[i-1][j];
+					if (j == 0) {
+						temp[0] = (byte) ((aesSubWord(aesRotWord(temp))[0]) ^ aesRcon[i/4]);
+						temp[1] = (byte) (aesSubWord(aesRotWord(temp))[1]);
+						temp[2] = (byte) (aesSubWord(aesRotWord(temp))[2]);
+						temp[3] = (byte) (aesSubWord(aesRotWord(temp))[3]);
+					}
+					for (int k = 0; k < 4; k++) {
+						aesRoundKeys[i][j][k] = (byte) (aesRoundKeys[i-1][j][k] ^ temp[k]);
+					}
+				}
+			}
 			return aesRoundKeys;
 		}
-	}
+	}	
 	
 	public byte[] getAesKey() {
 		return aesKey;
