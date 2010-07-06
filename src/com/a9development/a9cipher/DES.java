@@ -27,7 +27,7 @@ package com.a9development.a9cipher;
  * @version 1.0.0
  */
 
-public class DESCipher implements Cloneable {
+public class DES implements Cloneable {
 	private byte[] desKeyBytes;
 	private boolean[] desKeyBits;
 	private boolean[][] desSubKeys;
@@ -115,7 +115,7 @@ public class DESCipher implements Cloneable {
 		{2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11}}};
 	
 	
-	public DESCipher(byte[] Key) throws Exception {
+	public DES(byte[] Key) throws Exception {
 		if (Key.length != 8) {
 			throw new Exception("Key must be 8 bytes long");
 		} else {
