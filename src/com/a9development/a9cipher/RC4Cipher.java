@@ -24,8 +24,8 @@ public class RC4Cipher {
 		}
 	}
 	
-	public int[] encrypt(int[] plaintext) {
-		int[] ciphertext = new int[plaintext.length];
+	public byte[] encrypt(byte[] plaintext) {
+		byte[] ciphertext = new byte[plaintext.length];
 		int i = 0, j = 0, k, t;
 		for (int counter = 0; counter < plaintext.length; counter++) {
 			i = (i + 1) % 256;
@@ -35,12 +35,12 @@ public class RC4Cipher {
 			S[i] ^= S[j];
 			t = (S[i] + S[j]) % 256;
 			k = S[t];
-			ciphertext[counter] = plaintext[counter] ^ k;
+			ciphertext[counter] = (byte) (plaintext[counter] ^ k);
 		}
 		return ciphertext;
 	}
 	
-	public int[] decrypt(int[] ciphertext) {
+	public byte[] decrypt(byte[] ciphertext) {
 		return encrypt(ciphertext);
 	}
 }

@@ -94,16 +94,16 @@ public class CipherMain {
 			else if (rijndaelKey.length() != 32)
 				System.out.println("Key must be 32 digits");
 			else {
-				int[] intPT = new int[16];
-				int[] intK = new int[16];
+				byte[] bytePT = new byte[16];
+				byte[] byteK = new byte[16];
 				for (int i = 0; i < 32; i+=2) {
-					intPT[i/2] = (Character.digit(rijndaelPlainText.charAt(i), 16) << 4) + Character.digit(rijndaelPlainText.charAt(i+1), 16);
-					intK[i/2] = (Character.digit(rijndaelKey.charAt(i), 16) << 4) + Character.digit(rijndaelKey.charAt(i+1), 16);
+					bytePT[i/2] = (byte) ((Character.digit(rijndaelPlainText.charAt(i), 16) << 4) + Character.digit(rijndaelPlainText.charAt(i+1), 16));
+					byteK[i/2] = (byte) ((Character.digit(rijndaelKey.charAt(i), 16) << 4) + Character.digit(rijndaelKey.charAt(i+1), 16));
 				}
 				try {
-					RijndaelCipher rd = new RijndaelCipher(intK);
-					int[] CTBytes = rd.encrypt(intPT);
-					int[] PTBytes= rd.decrypt(CTBytes);
+					RijndaelCipher rd = new RijndaelCipher(byteK);
+					byte[] CTBytes = rd.encrypt(bytePT);
+					byte[] PTBytes= rd.decrypt(CTBytes);
 					
 					String CTString = "";
 					String PTString = "";

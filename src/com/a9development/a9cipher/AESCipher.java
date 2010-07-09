@@ -23,23 +23,23 @@ package com.a9development.a9cipher;
 public class AESCipher {
 	private RijndaelCipher rd;
 	
-	public AESCipher(int[] key) throws Exception {
+	public AESCipher(byte[] key) throws Exception {
 		rd = new RijndaelCipher(key);
 	}
 	
-	public int[] encrypt(int[] plaintext) throws Exception {
+	public byte[] encrypt(byte[] plaintext) throws Exception {
 		return rd.encrypt(plaintext);
 	}
 	
-	public int[] decrypt(int[] ciphertext) throws Exception {
+	public byte[] decrypt(byte[] ciphertext) throws Exception {
 		return rd.decrypt(ciphertext);
 	}
 	
-	public int[] getAesKey() {
+	public byte[] getAesKey() {
 		return rd.getRijndaelKey();
 	}
 
-	public void setAESKey(int[] aesKey) {
+	public void setAESKey(byte[] aesKey) {
 		rd.setRijndaelKey(aesKey);
 	}
 

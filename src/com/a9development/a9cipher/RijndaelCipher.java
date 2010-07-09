@@ -28,7 +28,7 @@ package com.a9development.a9cipher;
  */
 
 public class RijndaelCipher implements Cloneable {
-	private int[] rijndaelKey;
+	private byte[] rijndaelKey;
 	
 	private static final int[][] rijndaelSBox = {
 		{0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76},
@@ -76,7 +76,7 @@ public class RijndaelCipher implements Cloneable {
 			{0x0d, 0x09, 0x0e, 0x0b},
 			{0x0b, 0x0d, 0x09, 0x0e}};
 	             
-	public RijndaelCipher(int[] key) throws Exception {
+	public RijndaelCipher(byte[] key) throws Exception {
 		if (key.length != 16) {
 			// Currently only supports 128-bit keys. Will be expanded in a future version
 			throw new Exception("Key must be 16, 24, or 32 ints long");
@@ -85,11 +85,11 @@ public class RijndaelCipher implements Cloneable {
 		}
 	}
 	
-	public int[] encrypt(int[] plaintext) throws Exception {
+	public byte[] encrypt(byte[] plaintext) throws Exception {
 		if (plaintext.length != 16) {
 			throw new Exception("plaintext must be 16 ints long");
 		} else {
-			int[] ciphertext = new int[16];
+			byte[] ciphertext = new byte[16];
 			int[][] ctMatrix = new int[4][4];
 			int[][] ptMatrix = new int[4][4];
 			for (int i = 0; i < 4; i++) {
@@ -105,20 +105,20 @@ public class RijndaelCipher implements Cloneable {
 			}
 			ctMatrix = rijndaelAddRoundKey(rijndaelShiftRows(rijndaelSubints(ctMatrix)), rijndaelRKeys[10]);
 			for (int i = 0; i < 4; i++) {
-				ciphertext[4*i] = ctMatrix[i][0];
-				ciphertext[4*i + 1] = ctMatrix[i][1];
-				ciphertext[4*i + 2] = ctMatrix[i][2];
-				ciphertext[4*i + 3] = ctMatrix[i][3];
+				ciphertext[4*i] = (byte) (ctMatrix[i][0] & 0xffff);
+				ciphertext[4*i + 1] = (byte) (ctMatrix[i][1] & 0xffff);
+				ciphertext[4*i + 2] = (byte) (ctMatrix[i][2] & 0xffff);
+				ciphertext[4*i + 3] = (byte) (ctMatrix[i][3] & 0xffff);
 			}
 			return ciphertext;
 		}
 	}
 	
-	public int[] decrypt(int[] ciphertext) throws Exception {
+	public byte[] decrypt(byte[] ciphertext) throws Exception {
 		if (ciphertext.length != 16) {
 			throw new Exception("ciphertext must be 16 ints long");
 		} else {
-			int[] plaintext = new int[16];
+			byte[] plaintext = new byte[16];
 			int[][] ptMatrix = new int[4][4];
 			int[][] ctMatrix = new int[4][4];
 			for (int i = 0; i < 4; i++) {
@@ -134,10 +134,10 @@ public class RijndaelCipher implements Cloneable {
 			}
 			ptMatrix = rijndaelAddRoundKey(rijndaelInverseSubints(rijndaelInverseShiftRows(ptMatrix)), rijndaelRKeys[0]);
 			for (int i = 0; i < 4; i++) {
-				plaintext[4*i] = ptMatrix[i][0];
-				plaintext[4*i+1] = ptMatrix[i][1];
-				plaintext[4*i+2] = ptMatrix[i][2];
-				plaintext[4*i+3] = ptMatrix[i][3];
+				plaintext[4*i] = (byte) (ptMatrix[i][0] & 0xffff);
+				plaintext[4*i+1] = (byte) (ptMatrix[i][1] & 0xffff);
+				plaintext[4*i+2] = (byte) (ptMatrix[i][2] & 0xffff);
+				plaintext[4*i+3] = (byte) (ptMatrix[i][3] & 0xffff);
 			}
 			return plaintext;
 		}
@@ -272,7 +272,7 @@ public class RijndaelCipher implements Cloneable {
 		}
 	}
 	
-	private int[][][] rijndaelMakeRoundKeys (int[] key) throws Exception {
+	private int[][][] rijndaelMakeRoundKeys (byte[] key) throws Exception {
 		if (key.length != 16) {
 			throw new Exception("key must be 16 ints long");
 		} else {
@@ -319,11 +319,11 @@ public class RijndaelCipher implements Cloneable {
 		return p;
 	}
 		
-	public int[] getRijndaelKey() {
+	public byte[] getRijndaelKey() {
 		return rijndaelKey;
 	}
 
-	public void setRijndaelKey(int[] rijndaelKey) {
+	public void setRijndaelKey(byte[] rijndaelKey) {
 		this.rijndaelKey = rijndaelKey;
 	}
 
