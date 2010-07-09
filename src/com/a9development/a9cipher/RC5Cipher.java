@@ -1,5 +1,5 @@
 package com.a9development.a9cipher;
 
-public class Twofish {
+public class RC5Cipher {
 
 }

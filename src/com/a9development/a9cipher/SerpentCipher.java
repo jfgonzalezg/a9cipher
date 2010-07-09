@@ -1,6 +1,6 @@
 package com.a9development.a9cipher;
 
-public class Serpent {
+public class SerpentCipher {
 
 	private int[] serpentKey;
 	
@@ -29,7 +29,7 @@ public class Serpent {
 	};
 	private final int PHI = 0x9e3779b9;
 	
-	public Serpent(int[] key) throws Exception {
+	public SerpentCipher(int[] key) throws Exception {
 		if (key.length > 8) {
 			throw new Exception("key can only be 256b long");
 		} else {

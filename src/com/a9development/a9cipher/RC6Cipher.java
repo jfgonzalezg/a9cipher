@@ -1,5 +1,5 @@
 package com.a9development.a9cipher;
 
-public class RC6 {
+public class RC6Cipher {
 
 }

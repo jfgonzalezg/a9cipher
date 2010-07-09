@@ -1,11 +1,11 @@
 package com.a9development.a9cipher;
 
-public class RC4 {
+public class RC4Cipher {
 	private int[] S;
 	private int[] T;
 	private int keylen;
 	
-	public RC4(byte[] key) throws Exception {
+	public RC4Cipher(byte[] key) throws Exception {
 		if (key.length < 1 || key.length > 256) {
 			throw new Exception("key must be between 1 and 256 bytes");
 		} else {

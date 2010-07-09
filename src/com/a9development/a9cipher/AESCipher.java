@@ -20,11 +20,11 @@ package com.a9development.a9cipher;
 // A wrapper around the RijndaelCipher class that lets it be used as AESCipher
 // as well. This provides no new functionality other than to allow the
 // RijndaelCipher class to be called something else.
-public class AES {
-	private Rijndael rd;
+public class AESCipher {
+	private RijndaelCipher rd;
 	
-	public AES(int[] key) throws Exception {
-		rd = new Rijndael(key);
+	public AESCipher(int[] key) throws Exception {
+		rd = new RijndaelCipher(key);
 	}
 	
 	public int[] encrypt(int[] plaintext) throws Exception {

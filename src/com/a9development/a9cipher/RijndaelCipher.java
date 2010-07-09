@@ -27,7 +27,7 @@ package com.a9development.a9cipher;
  * @version 1.0.0
  */
 
-public class Rijndael implements Cloneable {
+public class RijndaelCipher implements Cloneable {
 	private int[] rijndaelKey;
 	
 	private static final int[][] rijndaelSBox = {
@@ -76,7 +76,7 @@ public class Rijndael implements Cloneable {
 			{0x0d, 0x09, 0x0e, 0x0b},
 			{0x0b, 0x0d, 0x09, 0x0e}};
 	             
-	public Rijndael(int[] key) throws Exception {
+	public RijndaelCipher(int[] key) throws Exception {
 		if (key.length != 16) {
 			// Currently only supports 128-bit keys. Will be expanded in a future version
 			throw new Exception("Key must be 16, 24, or 32 ints long");

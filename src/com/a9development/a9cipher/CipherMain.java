@@ -53,7 +53,7 @@ public class CipherMain {
 					byteKey[i/2] = (byte) ((Character.digit(desKey.charAt(i), 16) << 4) + Character.digit(desKey.charAt(i+1), 16));
 				}
 				try {
-					DES newDES = new DES(byteKey);
+					DESCipher newDES = new DESCipher(byteKey);
 					byte[] CTBytes = newDES.encrypt(bytePlainText);
 					byte[] PTBytes = newDES.decrypt(CTBytes);
 					
@@ -76,34 +76,32 @@ public class CipherMain {
 		}
 		
 		System.out.println("Enter 32-digit hex plaintext: ");
-		String rdPlainText = in.nextLine().toLowerCase();
+		String rijndaelPlainText = in.nextLine().toLowerCase();
 		System.out.println("Enter 32-digit hex key: ");
-		String rdKey = in.nextLine().toLowerCase();
-//		String rdPlainText = "0123456789abcdeffedcba9876543210";
-//		String rdKey = "0f1571c947d9e8590cb7add6af7f6798";
+		String rijndaelKey = in.nextLine().toLowerCase();
 		found = false;
-		Matcher rdPTMatcher = hexPattern.matcher(rdPlainText);
-		Matcher rdKMatcher = hexPattern.matcher(rdKey);
-		while (rdPTMatcher.find())
+		Matcher rijndaelPTMatcher = hexPattern.matcher(rijndaelPlainText);
+		Matcher rijndaelKMatcher = hexPattern.matcher(rijndaelKey);
+		while (rijndaelPTMatcher.find())
 			found = true;
-		while (rdKMatcher.find())
+		while (rijndaelKMatcher.find())
 			found = true;
 		if (found) {
 			System.out.println("Plaintext and key must be hex encoded");
 		} else {		
-			if (rdPlainText.length() != 32)
+			if (rijndaelPlainText.length() != 32)
 				System.out.println("Plain text must be 32 digits");
-			else if (rdKey.length() != 32)
+			else if (rijndaelKey.length() != 32)
 				System.out.println("Key must be 32 digits");
 			else {
 				int[] intPT = new int[16];
 				int[] intK = new int[16];
 				for (int i = 0; i < 32; i+=2) {
-					intPT[i/2] = (Character.digit(rdPlainText.charAt(i), 16) << 4) + Character.digit(rdPlainText.charAt(i+1), 16);
-					intK[i/2] = (Character.digit(rdKey.charAt(i), 16) << 4) + Character.digit(rdKey.charAt(i+1), 16);
+					intPT[i/2] = (Character.digit(rijndaelPlainText.charAt(i), 16) << 4) + Character.digit(rijndaelPlainText.charAt(i+1), 16);
+					intK[i/2] = (Character.digit(rijndaelKey.charAt(i), 16) << 4) + Character.digit(rijndaelKey.charAt(i+1), 16);
 				}
 				try {
-					Rijndael rd = new Rijndael(intK);
+					RijndaelCipher rd = new RijndaelCipher(intK);
 					int[] CTBytes = rd.encrypt(intPT);
 					int[] PTBytes= rd.decrypt(CTBytes);
 					
@@ -114,8 +112,8 @@ public class CipherMain {
 						PTString += Integer.toString((PTBytes[i] & 0xff) + 0x100, 16).substring(1);
 					}
 					
-					System.out.println("Plaintext:  " + rdPlainText);
-					System.out.println("Key:        " + rdKey);
+					System.out.println("Plaintext:  " + rijndaelPlainText);
+					System.out.println("Key:        " + rijndaelKey);
 					System.out.println("Ciphertext: " + CTString);
 					System.out.println("Backtext:   " + PTString);
 				} catch (Exception e) {

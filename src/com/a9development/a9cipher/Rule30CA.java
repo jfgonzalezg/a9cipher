@@ -19,17 +19,17 @@ package com.a9development.a9cipher;
 
 import java.io.Serializable;
 
-public class Rule30 implements Serializable {
+public class Rule30CA implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private long seed;
 	
-	public Rule30() {
+	public Rule30CA() {
 		this(System.currentTimeMillis());
 	}
 	
-	public Rule30(long seed) {
+	public Rule30CA(long seed) {
 		setSeed(seed);
 	}
 	
