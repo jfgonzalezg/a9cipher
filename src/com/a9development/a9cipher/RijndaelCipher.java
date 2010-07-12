@@ -27,7 +27,7 @@ package com.a9development.a9cipher;
  * @version 1.0.0
  */
 
-public class RijndaelCipher implements Cloneable {
+public class RijndaelCipher {
 	private byte[] rijndaelKey;
 	
 	private static final int[][] rijndaelSBox = {
@@ -130,7 +130,11 @@ public class RijndaelCipher implements Cloneable {
 			int[][][] rijndaelRKeys = rijndaelMakeRoundKeys(rijndaelKey);
 			ptMatrix = rijndaelAddRoundKey(ctMatrix, rijndaelRKeys[10]);
 			for (int i = 9; i > 0; i--) {
-				ptMatrix = rijndaelInverseMixColumns(rijndaelAddRoundKey(rijndaelInverseSubints(rijndaelInverseShiftRows(ptMatrix)), rijndaelRKeys[i]));
+//				ptMatrix = rijndaelInverseMixColumns(rijndaelAddRoundKey(rijndaelInverseSubints(rijndaelInverseShiftRows(ptMatrix)), rijndaelRKeys[i]));
+				ptMatrix = rijndaelInverseShiftRows(ptMatrix);
+				ptMatrix = rijndaelInverseSubints(ptMatrix);
+				ptMatrix = rijndaelAddRoundKey(ptMatrix, rijndaelRKeys[i]);
+				ptMatrix = rijndaelInverseMixColumns(ptMatrix);
 			}
 			ptMatrix = rijndaelAddRoundKey(rijndaelInverseSubints(rijndaelInverseShiftRows(ptMatrix)), rijndaelRKeys[0]);
 			for (int i = 0; i < 4; i++) {
@@ -164,7 +168,10 @@ public class RijndaelCipher implements Cloneable {
 			int[][] subbed = new int[4][4];
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 4; j++) {
-					subbed[i][j] = rijndaelInverseSBox[B[i][j] >> 4][B[i][j] % 16];
+					int r = (B[i][j] & 0xF0) >>> 4;
+					int c = B[i][j] & 0xF;
+					subbed[i][j] = rijndaelInverseSBox[r][c];
+//					subbed[i][j] = rijndaelInverseSBox[B[i][j] >>> 4][B[i][j] % 16];
 				}
 			}
 			return subbed;
