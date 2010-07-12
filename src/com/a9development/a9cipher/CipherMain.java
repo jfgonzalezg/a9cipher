@@ -21,6 +21,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.a9development.ciphertestharness.A9Utility;
+
 public class CipherMain {
 
 	public static void main(String[] args) {
@@ -46,24 +48,17 @@ public class CipherMain {
 			else if (desKey.length() != 16)
 				System.out.println("Key must be 16 digits");
 			else {
-				byte[] bytePlainText = new byte[8];
-				byte[] byteKey = new byte[8];
-				for (int i = 0; i < 16; i+=2) {
-					bytePlainText[i/2] = (byte) ((Character.digit(desPlainText.charAt(i), 16) << 4) + Character.digit(desPlainText.charAt(i+1), 16));
-					byteKey[i/2] = (byte) ((Character.digit(desKey.charAt(i), 16) << 4) + Character.digit(desKey.charAt(i+1), 16));
-				}
+				byte[] bytePlainText = A9Utility.stringToBytes(desPlainText);
+				byte[] byteKey = A9Utility.stringToBytes(desKey);
 				try {
 					DESCipher newDES = new DESCipher(byteKey);
+					
 					byte[] CTBytes = newDES.encrypt(bytePlainText);
 					byte[] PTBytes = newDES.decrypt(CTBytes);
 					
-					String CTString = "";
-					String PTString = "";
-					for (int i = 0; i < 8; i++) {
-						CTString += Integer.toString((CTBytes[i] & 0xff) + 0x100, 16).substring(1);
-						PTString += Integer.toString((PTBytes[i] & 0xff) + 0x100, 16).substring(1);
-					}
-					
+					String CTString = A9Utility.bytesToString(CTBytes);
+					String PTString = A9Utility.bytesToString(PTBytes);
+										
 					System.out.println("Plaintext:  " + desPlainText);
 					System.out.println("Key:        " + desKey);
 					System.out.println("Ciphertext: " + CTString);
@@ -94,24 +89,18 @@ public class CipherMain {
 			else if (rijndaelKey.length() != 32)
 				System.out.println("Key must be 32 digits");
 			else {
-				byte[] bytePT = new byte[16];
-				byte[] byteK = new byte[16];
-				for (int i = 0; i < 32; i+=2) {
-					bytePT[i/2] = (byte) ((Character.digit(rijndaelPlainText.charAt(i), 16) << 4) + Character.digit(rijndaelPlainText.charAt(i+1), 16));
-					byteK[i/2] = (byte) ((Character.digit(rijndaelKey.charAt(i), 16) << 4) + Character.digit(rijndaelKey.charAt(i+1), 16));
-				}
+				byte[] bytePT = A9Utility.stringToBytes(rijndaelPlainText);
+				byte[] byteK = A9Utility.stringToBytes(rijndaelKey);
+
 				try {
 					RijndaelCipher rd = new RijndaelCipher(byteK);
+					
 					byte[] CTBytes = rd.encrypt(bytePT);
 					byte[] PTBytes= rd.decrypt(CTBytes);
 					
-					String CTString = "";
-					String PTString = "";
-					for (int i = 0; i < 16; i++) {
-						CTString += Integer.toString((CTBytes[i] & 0xff) + 0x100, 16).substring(1);
-						PTString += Integer.toString((PTBytes[i] & 0xff) + 0x100, 16).substring(1);
-					}
-					
+					String CTString = A9Utility.bytesToString(CTBytes);
+					String PTString = A9Utility.bytesToString(PTBytes);
+										
 					System.out.println("Plaintext:  " + rijndaelPlainText);
 					System.out.println("Key:        " + rijndaelKey);
 					System.out.println("Ciphertext: " + CTString);
