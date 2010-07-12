@@ -19,10 +19,7 @@ public class RijndaelCipherTest {
 	public void testRijndaelEncrypt() throws Exception {
 		RijndaelCipher rijndaelTester1 = new RijndaelCipher(K1);
 		byte[] result = rijndaelTester1.encrypt(PT1);
-		String resultString = "";
-		for (int i = 0; i < 16; i++) {
-			resultString += Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1);
-		}
+		String resultString = A9Utility.bytesToString(result);
 		assertEquals("Result", CT1STRING, resultString);
 	}
 	
@@ -30,10 +27,7 @@ public class RijndaelCipherTest {
 	public void testRijndaelDecrypt() throws Exception {
 		RijndaelCipher rijndaelTester1 = new RijndaelCipher(K1);
 		byte[] result = rijndaelTester1.decrypt(CT1);
-		String resultString = "";
-		for (int i = 0; i < 16; i++) {
-			resultString += Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1);
-		}
+		String resultString = A9Utility.bytesToString(result);
 		assertEquals("Result", PT1STRING, resultString);
 	}
 	

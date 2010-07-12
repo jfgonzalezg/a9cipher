@@ -7,7 +7,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { DESCipherTest.class, RijndaelCipherTest.class } )
+@Suite.SuiteClasses( { DESCipherTest.class, RijndaelCipherTest.class, SHA1Test.class } )
 public class AllTests {
 
 	public static Test suite() {
