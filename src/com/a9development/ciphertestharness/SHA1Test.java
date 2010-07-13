@@ -23,24 +23,25 @@ public class SHA1Test {
 	@Test
 	public void testSHA1a() throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-1");
-		String expectedString = A9Utility.bytesToString(md.digest(TEXT1[0].getBytes()));
-		String actualString = A9Utility.bytesToString(SHA1.digest(TEXT1[0].getBytes()));
+		String expectedString = A9Utility.bytesToHex(md.digest(TEXT1[0].getBytes()));
+		String actualString = A9Utility.bytesToHex(SHA1.digest(TEXT1[0].getBytes()));
 		assertEquals("Result", expectedString, actualString);
 	}
 	
 	@Test
 	public void testSHA1b() throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-1");
-		String expectedString = A9Utility.bytesToString(md.digest(TEXT1[1].getBytes()));
-		String actualString = A9Utility.bytesToString(SHA1.digest(TEXT1[1].getBytes()));
+		String expectedString = A9Utility.bytesToHex(md.digest(TEXT1[1].getBytes()));
+		String actualString = A9Utility.bytesToHex(SHA1.digest(TEXT1[1].getBytes()));
 		assertEquals("Result", expectedString, actualString);
 	}
 	
 	@Test
 	public void testSHA1c() throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-1");
-		String expectedString = A9Utility.bytesToString(md.digest(TEXT1[2].getBytes()));
-		String actualString = A9Utility.bytesToString(SHA1.digest(TEXT1[2].getBytes()));
+		String expectedString = A9Utility.bytesToHex(md.digest(TEXT1[2].getBytes()));
+		String actualString = A9Utility.bytesToHex(SHA1.digest(TEXT1[2].getBytes()));
 		assertEquals("Result", expectedString, actualString);
 	}
+	
 }
