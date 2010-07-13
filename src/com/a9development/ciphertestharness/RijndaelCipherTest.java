@@ -19,7 +19,7 @@ public class RijndaelCipherTest {
 	public void testRijndaelEncrypt() throws Exception {
 		RijndaelCipher rijndaelTester1 = new RijndaelCipher(K1);
 		byte[] result = rijndaelTester1.encrypt(PT1);
-		String resultString = A9Utility.bytesToString(result);
+		String resultString = A9Utility.bytesToHex(result);
 		assertEquals("Result", CT1STRING, resultString);
 	}
 	
@@ -27,7 +27,7 @@ public class RijndaelCipherTest {
 	public void testRijndaelDecrypt() throws Exception {
 		RijndaelCipher rijndaelTester1 = new RijndaelCipher(K1);
 		byte[] result = rijndaelTester1.decrypt(CT1);
-		String resultString = A9Utility.bytesToString(result);
+		String resultString = A9Utility.bytesToHex(result);
 		assertEquals("Result", PT1STRING, resultString);
 	}
 	

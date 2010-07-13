@@ -18,7 +18,7 @@ public class DESCipherTest {
 	public void testDESEncrypt() throws Exception {
 		DESCipher desTester1 = new DESCipher(K1);
 		byte[] result = desTester1.encrypt(PT1);
-		String resultString = A9Utility.bytesToString(result);
+		String resultString = A9Utility.bytesToHex(result);
 		assertEquals("Result", CT1STRING, resultString);
 	}
 	
@@ -26,7 +26,7 @@ public class DESCipherTest {
 	public void testDESDecrypt() throws Exception {
 		DESCipher desTester1 = new DESCipher(K1);
 		byte[] result = desTester1.decrypt(CT1);
-		String resultString = A9Utility.bytesToString(result);
+		String resultString = A9Utility.bytesToHex(result);
 		assertEquals("Result", PT1STRING, resultString);
 	}
 	
