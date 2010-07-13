@@ -48,16 +48,16 @@ public class CipherMain {
 			else if (desKey.length() != 16)
 				System.out.println("Key must be 16 digits");
 			else {
-				byte[] bytePlainText = A9Utility.stringToBytes(desPlainText);
-				byte[] byteKey = A9Utility.stringToBytes(desKey);
+				byte[] bytePlainText = A9Utility.hexToBytes(desPlainText);
+				byte[] byteKey = A9Utility.hexToBytes(desKey);
 				try {
 					DESCipher newDES = new DESCipher(byteKey);
 					
 					byte[] CTBytes = newDES.encrypt(bytePlainText);
 					byte[] PTBytes = newDES.decrypt(CTBytes);
 					
-					String CTString = A9Utility.bytesToString(CTBytes);
-					String PTString = A9Utility.bytesToString(PTBytes);
+					String CTString = A9Utility.bytesToHex(CTBytes);
+					String PTString = A9Utility.bytesToHex(PTBytes);
 										
 					System.out.println("Plaintext:  " + desPlainText);
 					System.out.println("Key:        " + desKey);
@@ -89,8 +89,8 @@ public class CipherMain {
 			else if (rijndaelKey.length() != 32)
 				System.out.println("Key must be 32 digits");
 			else {
-				byte[] bytePT = A9Utility.stringToBytes(rijndaelPlainText);
-				byte[] byteK = A9Utility.stringToBytes(rijndaelKey);
+				byte[] bytePT = A9Utility.hexToBytes(rijndaelPlainText);
+				byte[] byteK = A9Utility.hexToBytes(rijndaelKey);
 
 				try {
 					RijndaelCipher rd = new RijndaelCipher(byteK);
@@ -98,8 +98,8 @@ public class CipherMain {
 					byte[] CTBytes = rd.encrypt(bytePT);
 					byte[] PTBytes= rd.decrypt(CTBytes);
 					
-					String CTString = A9Utility.bytesToString(CTBytes);
-					String PTString = A9Utility.bytesToString(PTBytes);
+					String CTString = A9Utility.bytesToHex(CTBytes);
+					String PTString = A9Utility.bytesToHex(PTBytes);
 										
 					System.out.println("Plaintext:  " + rijndaelPlainText);
 					System.out.println("Key:        " + rijndaelKey);
