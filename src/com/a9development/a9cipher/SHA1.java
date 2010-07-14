@@ -2,7 +2,14 @@ package com.a9development.a9cipher;
 
 public class SHA1 {
 
-	public static byte[] digest(byte[] message) {
+	private static final String ALGORITHM = "SHA1";
+	private static final int DIGEST_SIZE = 160;
+	
+	public SHA1() {
+		
+	}
+	
+	public byte[] digest(byte[] message) {
 		int[] H = new int[5];
 		int[] K = new int[4];
 		H[0] = 0x67452301;
@@ -65,7 +72,7 @@ public class SHA1 {
 		return hashed;
 	}
 
-	private static int F(int b, int c, int d, int i) {
+	private int F(int b, int c, int d, int i) {
 		if (i < 20) {
 			return (b & c) | (~b & d);
 		} else if (19 < i && i < 40) {
@@ -77,7 +84,7 @@ public class SHA1 {
 		}
 	}
 	
-	private static byte[] padMessage(byte[] data){
+	private byte[] padMessage(byte[] data){
 		int origLength = data.length;
 		int tailLength = origLength%64;
 		int padLength = 0;

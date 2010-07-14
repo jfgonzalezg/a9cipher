@@ -4,44 +4,30 @@ import java.security.NoSuchAlgorithmException;
 
 public class SHA2 {
 	
-	public static byte[] digest(byte[] message) {
-		return digest256(message);
-	}
-	
-	public static byte[] digest(byte[] message, int digestSize) throws NoSuchAlgorithmException {
-		if (digestSize == 224) {
-			return digest224(message);
-		} else if (digestSize == 256) {
-			return digest256(message);
-		} else if (digestSize == 384) {
-			return digest384(message);
-		} else if (digestSize == 512) {
-			return digest512(message);
+	private static String ALGORITHM;
+	public SHA2(String algorithm) throws NoSuchAlgorithmException {
+		if (algorithm.toUpperCase() == "SHA-256") {
+			ALGORITHM = algorithm;
+		} else if (algorithm.toUpperCase() == "SHA-384") {
+			ALGORITHM = algorithm;
+		} else if (algorithm.toUpperCase() == "SHA-512") {
+			ALGORITHM = algorithm;
 		} else {
-			throw new NoSuchAlgorithmException("digestSize must be one of 224, 256, 384, or 512");
+			throw new NoSuchAlgorithmException("algorithm must be one of SHA-256, SHA-384, or SHA-512");
 		}
 	}
 	
-	public static byte[] digest(byte[] message, String algorithm) throws NoSuchAlgorithmException {
-		if (algorithm.toLowerCase() == "sha224" || algorithm.toLowerCase() == "sha-224") {
-			return digest224(message);
-		} else if (algorithm.toLowerCase() == "sha256" || algorithm.toLowerCase() == "sha-256") {
+	public byte[] digest(byte[] message) {
+		if (ALGORITHM == "SHA-256") {
 			return digest256(message);
-		} else if (algorithm.toLowerCase() == "sha384" || algorithm.toLowerCase() == "sha-384") {
+		} else if (ALGORITHM == "SHA-384") {
 			return digest384(message);
-		} else if (algorithm.toLowerCase() == "sha512" || algorithm.toLowerCase() == "sha-512") {
-			return digest512(message);
 		} else {
-			throw new NoSuchAlgorithmException("algorithm must be one of SHA-224, SHA-256, SHA-384, or SHA-512");
+			return digest512(message);
 		}
 	}
 	
-	public static byte[] digest224(byte[] message) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public static byte[] digest256(byte[] message) {
+	private static byte[] digest256(byte[] message) {
 		byte[] hashed = new byte[32], block = new byte[64], padded = padMessage(message);
 		int[] K = {
 				0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -76,9 +62,9 @@ public class SHA2 {
 			}
 			
 			for (int j = 16; j < 64; j++) {
-				s0 = Integer.rotateRight(words[i-15], 7) ^ Integer.rotateRight(words[i-15], 18) ^ (words[i-15] >>> 3);
-				s1 = Integer.rotateRight(words[i-2], 17) ^ Integer.rotateRight(words[i-2], 19) ^ (words[i-2] >>> 10);
-				words[i] = words[i-16] + s0 + words[i-7] + s1;
+				s0 = Integer.rotateRight(words[j-15], 7) ^ Integer.rotateRight(words[j-15], 18) ^ (words[j-15] >>> 3);
+				s1 = Integer.rotateRight(words[j-2], 17) ^ Integer.rotateRight(words[j-2], 19) ^ (words[j-2] >>> 10);
+				words[j] = words[j-16] + s0 + words[j-7] + s1;
 			}
 			
 			for (int j = 0; j < 64; j++) {
@@ -116,12 +102,12 @@ public class SHA2 {
 		return hashed;
 	}
 
-	public static byte[] digest384(byte[] message) {
+	private static byte[] digest384(byte[] message) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public static byte[] digest512(byte[] message) {
+	private static byte[] digest512(byte[] message) {
 		// TODO Auto-generated method stub
 		return null;
 	}
