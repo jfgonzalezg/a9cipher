@@ -27,4 +27,12 @@ public class A9Utility {
 		
 		return b;
 	}
+	
+	public static int bytesToInt(byte[] b) throws Exception {
+		if (b.length != 4) {
+			throw new Exception("b must be 4 bytes");
+		} else {
+			return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3];
+		}
+	}
 }
