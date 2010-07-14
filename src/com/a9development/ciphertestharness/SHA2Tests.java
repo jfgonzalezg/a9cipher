@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.junit.Test;
 
+import com.a9development.a9cipher.A9Utility;
 import com.a9development.a9cipher.SHA2;
 
 public class SHA2Tests {
