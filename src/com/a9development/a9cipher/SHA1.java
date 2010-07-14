@@ -2,8 +2,6 @@ package com.a9development.a9cipher;
 
 public class SHA1 {
 
-	static int[] H, K;
-	
 	public static byte[] digest(byte[] message) {
 		int[] H = new int[5];
 		int[] K = new int[4];

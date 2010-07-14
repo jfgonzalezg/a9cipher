@@ -3,8 +3,6 @@ package com.a9development.a9cipher;
 import java.security.NoSuchAlgorithmException;
 
 public class SHA2 {
-
-	private static int[] H;
 	
 	public static byte[] digest(byte[] message) {
 		return digest256(message);
