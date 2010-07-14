@@ -1,9 +1,10 @@
 package com.a9development.a9cipher;
 
-public class RC4Cipher {
+public class RC4Cipher implements A9Cipher {
 	private int[] S;
 	private int[] T;
 	private int keylen;
+	private static final String ALGORITHM = "RC4";
 	
 	public RC4Cipher(byte[] key) throws Exception {
 		if (key.length < 1 || key.length > 256) {
@@ -42,5 +43,9 @@ public class RC4Cipher {
 	
 	public byte[] decrypt(byte[] ciphertext) {
 		return encrypt(ciphertext);
+	}
+	
+	public String getAlgorithm() {
+		return ALGORITHM;
 	}
 }

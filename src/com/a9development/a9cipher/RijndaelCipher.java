@@ -27,8 +27,9 @@ package com.a9development.a9cipher;
  * @version 1.0.0
  */
 
-public class RijndaelCipher {
+public class RijndaelCipher implements A9Cipher {
 	private byte[] rijndaelKey;
+	private static final String ALGORITHM = "Rijndael";
 	
 	private static final int[][] rijndaelSBox = {
 		{0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76},
@@ -332,6 +333,10 @@ public class RijndaelCipher {
 
 	public void setRijndaelKey(byte[] rijndaelKey) {
 		this.rijndaelKey = rijndaelKey;
+	}
+	
+	public String getAlgorithm() {
+		return ALGORITHM;
 	}
 
 }

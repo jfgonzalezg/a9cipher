@@ -1,6 +1,6 @@
 package com.a9development.a9cipher;
 
-public class SHA1 {
+public class SHA1 implements A9Digest {
 
 	private static final String ALGORITHM = "SHA1";
 	private static final int DIGEST_SIZE = 160;
@@ -110,6 +110,14 @@ public class SHA1 {
 				thePad,0,output,origLength,thePad.length);
 		return output;
 
+	}
+	
+	public String getAlgorithm() {
+		return ALGORITHM;
+	}
+	
+	public int getDigestSize() {
+		return DIGEST_SIZE;
 	}
 
 }

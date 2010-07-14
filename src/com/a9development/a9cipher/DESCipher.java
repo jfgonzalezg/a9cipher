@@ -27,10 +27,11 @@ package com.a9development.a9cipher;
  * @version 1.0.0
  */
 
-public class DESCipher implements Cloneable {
+public class DESCipher implements A9Cipher {
 	private byte[] desKeyBytes;
 	private boolean[] desKeyBits;
 	private boolean[][] desSubKeys;
+	private static final String ALGORITHM = "DES";
 		
 	private int[] desKeySchedule = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 	private int[] desIP = {
@@ -434,5 +435,10 @@ public class DESCipher implements Cloneable {
 	public void setDesKeyBytes(byte[] desKeyBytes) {
 		this.desKeyBytes = desKeyBytes;
 	}
+
+	public String getAlgorithm() {
+		return ALGORITHM;
+	}
+	
 	
 }

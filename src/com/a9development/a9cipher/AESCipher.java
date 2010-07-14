@@ -20,8 +20,9 @@ package com.a9development.a9cipher;
 // A wrapper around the RijndaelCipher class that lets it be used as AESCipher
 // as well. This provides no new functionality other than to allow the
 // RijndaelCipher class to be called something else.
-public class AESCipher {
+public class AESCipher implements A9Cipher {
 	private RijndaelCipher rd;
+	private final static String ALGORITHM = "AES";
 	
 	public AESCipher(byte[] key) throws Exception {
 		rd = new RijndaelCipher(key);
@@ -41,6 +42,10 @@ public class AESCipher {
 
 	public void setAESKey(byte[] aesKey) {
 		rd.setRijndaelKey(aesKey);
+	}
+	
+	public String getAlgorithm() {
+		return ALGORITHM;
 	}
 
 }

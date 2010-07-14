@@ -1,9 +1,9 @@
 package com.a9development.a9cipher;
 
-public class SerpentCipher {
+public class SerpentCipher implements A9Cipher {
 
 	private int[] serpentKey;
-	
+	private static final String ALGORITHM = "Serpent";
 	//TODO fill in permutations and sboxes
 	private final int[] IP = {};
 	private final int[] INVERSEIP = {};
@@ -40,30 +40,20 @@ public class SerpentCipher {
 		}
 	}
 	
-	public int[] encrypt(int[] plaintext) {
-		int[] ciphertext = new int[4];
+	public byte[] encrypt(byte[] plaintext) {
+		byte[] ciphertext = new byte[32];
 		int[][] K = serpentMakeKeys();
 		int[][] B = new int[33][4];
-		B[0] = IP(plaintext);
-		for (int i = 0; i < 31; i++) {
-			int[] temp = {B[i][0] ^ K[i][0], B[i][1] ^ K[i][1], B[i][2] ^ K[i][2], B[i][3] ^ K[i][3]};
-			B[i+1] = L(S(temp, i));
-		}
-		int[] temp = {B[31][0] ^ K[31][0], B[31][1] ^ K[31][1], B[31][2] ^ K[31][2], B[31][3] ^ K[31][3]};
-		B[32][0] = S(temp, 31)[0] ^ K[32][0];
-		B[32][1] = S(temp, 31)[1] ^ K[32][1];
-		B[32][2] = S(temp, 31)[2] ^ K[32][2];
-		B[32][3] = S(temp, 31)[3] ^ K[32][3];
-		ciphertext = FP(B[32]);
+		// TODO Implement Serpent algorithm;
 		
 		return ciphertext;
 	}
 	
-	public int[] decrypt(int[] ciphertext) {
-		int[] plaintext = new int[4];
+	public byte[] decrypt(byte[] ciphertext) {
+		byte[] plaintext = new byte[32];
 		int[][] K = serpentMakeKeys();
 		int[][] B = new int[33][4];
-		//TODO finish decrypting stage
+		// TODO finish decrypting stage
 		
 		return plaintext;
 	}
@@ -114,5 +104,9 @@ public class SerpentCipher {
 	private int[] FP(int[] is) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public String getAlgorithm() {
+		return ALGORITHM;
 	}
 }

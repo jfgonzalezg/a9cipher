@@ -2,16 +2,21 @@ package com.a9development.a9cipher;
 
 import java.security.NoSuchAlgorithmException;
 
-public class SHA2 {
+public class SHA2 implements A9Digest {
 	
 	private static String ALGORITHM;
+	private static int DIGEST_SIZE;
+	
 	public SHA2(String algorithm) throws NoSuchAlgorithmException {
 		if (algorithm.toUpperCase() == "SHA-256") {
 			ALGORITHM = algorithm;
+			DIGEST_SIZE = 256;
 		} else if (algorithm.toUpperCase() == "SHA-384") {
 			ALGORITHM = algorithm;
+			DIGEST_SIZE = 384;
 		} else if (algorithm.toUpperCase() == "SHA-512") {
 			ALGORITHM = algorithm;
+			DIGEST_SIZE = 512;
 		} else {
 			throw new NoSuchAlgorithmException("algorithm must be one of SHA-256, SHA-384, or SHA-512");
 		}
@@ -139,5 +144,12 @@ public class SHA2 {
 		return output;
 
 	}
+	
+	public String getAlgorithm() {
+		return ALGORITHM;
+	}
 
+	public int getDigestSize() {
+		return DIGEST_SIZE;
+	}
 }
