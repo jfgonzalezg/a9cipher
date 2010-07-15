@@ -1,32 +1,29 @@
 package com.a9development.a9cipher;
 
-public class SHA1 implements A9Digest {
+public class SHA1 {
 
-	private static final String ALGORITHM = "SHA1";
-	private static final int DIGEST_SIZE = 160;
+	static int H0, H1, H2, H3, H4;
 	
 	public SHA1() {
-		
+//		ALGORITHM = "SHA1";
+//		DIGEST_SIZE = 160;
+//		Integer[] H = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};
+//		Integer[] K = {0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6};
 	}
 	
 	public byte[] digest(byte[] message) {
-		int[] H = new int[5];
-		int[] K = new int[4];
-		H[0] = 0x67452301;
-		H[1] = 0xEFCDAB89;
-		H[2] = 0x98BADCFE;
-		H[3] = 0x10325476;
-		H[4] = 0xC3D2E1F0;
-		K[0] = 0x5A827999;
-		K[1] = 0x6ED9EBA1;
-		K[2] = 0x8F1BBCDC;
-		K[3] = 0xCA62C1D6;
+		H0 = 0x67452301;
+		H1 = 0xEFCDAB89;
+		H2 = 0x98BADCFE;
+		H3 = 0x10325476;
+		H4 = 0xC3D2E1F0;
 		
 		byte[] block = new byte[64];
 		byte[] padded = new byte[(message.length + 64 - (message.length % 64))];
 		byte[] hashed = new byte[20];
-		int A, B, C, D, E;
+		int A, B, C, D, E, F, K;
 		
+		// Append 10000... to the message
 		padded = padMessage(message);
 		
 		for (int i = 0; i < padded.length / 64; i++) {
@@ -44,47 +41,66 @@ public class SHA1 implements A9Digest {
 				words[j] = Integer.rotateLeft((words[j-3] ^ words[j-8] ^ words[j-14] ^ words[j-16]), 1);
 			}
 			
-			A = H[0];
-			B = H[1];
-			C = H[2];
-			D = H[3];
-			E = H[4];
+			A = H0;
+			B = H1;
+			C = H2;
+			D = H3;
+			E = H4;
 			
 			for (i = 0; i < 80; i++) {
-				int temp = Integer.rotateLeft(A, 5) + F(B, C, D, i) + E + K[i/20] + words[i];
+				if (i < 20) {
+					F = (B & C) | (~B & D);
+					K = 0x5A827999;
+				} else if (19 < i && i < 40) {
+					F = B ^ C ^ D;
+					K = 0x6ED9EBA1;
+				} else if (39 < i && i < 60) {
+					F = (B & C) | (B & D) | (C & D);
+					K = 0x8F1BBCDC;
+				} else {
+					F = B ^ C ^ D;
+					K = 0xCA62C1D6;
+				}
+				int temp = Integer.rotateLeft(A, 5) + F + E + K + words[i];
 				E = D;
 				D = C;
 				C = Integer.rotateLeft(B, 30);
 				B = A;
 				A = temp;
 			}
-			H[0] += A;
-			H[1] += B;
-			H[2] += C;
-			H[3] += D;
-			H[4] += E;
+			H0 += A;
+			H1 += B;
+			H2 += C;
+			H3 += D;
+			H4 += E;
 		}
 		
-		for (int i = 0; i < 5; i++) {
-			System.arraycopy(A9Utility.intToByes(H[i]), 0, hashed, 4*i, 4);
-		}
+		hashed[0] = (byte) ((H0 >>> 24) & 0xff);
+		hashed[1] = (byte) ((H0 >>> 16) & 0xff);
+		hashed[2] = (byte) ((H0 >>> 8) & 0xff);
+		hashed[3] = (byte) (H0 & 0xff);
+		hashed[4] = (byte) ((H1 >>> 24) & 0xff);
+		hashed[5] = (byte) ((H1 >>> 16) & 0xff);
+		hashed[6] = (byte) ((H1 >>> 8) & 0xff);
+		hashed[7] = (byte) (H1 & 0xff);
+		hashed[8] = (byte) ((H2 >>> 24) & 0xff);
+		hashed[9] = (byte) ((H2 >>> 16) & 0xff);
+		hashed[10] = (byte) ((H2 >>> 8) & 0xff);
+		hashed[11] = (byte) (H2 & 0xff);
+		hashed[12] = (byte) ((H3 >>> 24) & 0xff);
+		hashed[13] = (byte) ((H3 >>> 16) & 0xff);
+		hashed[14] = (byte) ((H3 >>> 8) & 0xff);
+		hashed[15] = (byte) (H3 & 0xff);
+		hashed[16] = (byte) ((H4 >>> 24) & 0xff);
+		hashed[17] = (byte) ((H4 >>> 16) & 0xff);
+		hashed[18] = (byte) ((H4 >>> 8) & 0xff);
+		hashed[19] = (byte) (H4 & 0xff);
 		
 		return hashed;
 	}
 
-	private int F(int b, int c, int d, int i) {
-		if (i < 20) {
-			return (b & c) | (~b & d);
-		} else if (19 < i && i < 40) {
-			return b ^ c ^ d;
-		} else if (39 < i && i < 60) {
-			return (b & c) | (b & d) | (c & d);
-		} else {
-			return b ^ c ^ d;
-		}
-	}
-	
-	private byte[] padMessage(byte[] data){
+
+	private static byte[] padMessage(byte[] data){
 		int origLength = data.length;
 		int tailLength = origLength%64;
 		int padLength = 0;
@@ -92,32 +108,18 @@ public class SHA1 implements A9Digest {
 			padLength = 64 - tailLength;
 		else
 			padLength = 128 - tailLength;
-
 		byte[] thePad = new byte[padLength];
 		thePad[0] = (byte)0x80;
 		long lengthInBits = origLength * 8;
-		for(int cnt = 0;cnt < 8;cnt++){
-			thePad[thePad.length - 1 - cnt] =
-				(byte)((lengthInBits >> (8 * cnt))
-						& 0x00000000000000FF);
+		for (int i = 0; i < 8; i++) {
+			thePad[thePad.length - 1 - i] =	(byte) ((lengthInBits >> (8 * i)) & 0xFF);
 		}
 
-		byte[] output =
-			new byte[origLength + padLength];
+		byte[] output = new byte[origLength + padLength];
 
-		System.arraycopy(data,0,output,0,origLength);
-		System.arraycopy(
-				thePad,0,output,origLength,thePad.length);
+		System.arraycopy(data, 0, output, 0, origLength);
+		System.arraycopy(thePad, 0, output, origLength, thePad.length);
 		return output;
-
-	}
-	
-	public String getAlgorithm() {
-		return ALGORITHM;
-	}
-	
-	public int getDigestSize() {
-		return DIGEST_SIZE;
 	}
 
 }
