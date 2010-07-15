@@ -44,4 +44,5 @@ public class A9Utility {
 		}
 		return b;
 	}
+
 }

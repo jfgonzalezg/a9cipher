@@ -12,7 +12,7 @@ import com.a9development.a9cipher.SHA2;
 
 public class SHA2Tests {
 
-	private final String MESSAGE_0 = "";
+	private final String MESSAGE_0 = "abc";
 	private final String MESSAGE_1 = "The quick brown fox jumps over the lazy dog";
 	private final String MESSAGE_2 = "The quick brown fox jumps over the lazy cog";
 	

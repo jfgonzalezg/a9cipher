@@ -208,12 +208,12 @@ public class SHA2 {
 			}
 
 			for (int j = 16; j < 80; j++) {
-				words[j] = s1(words[j-2] + words[j-7] + s0(words[j-15]) + words[j-16]);
+				words[j] = Sigma1(words[j-2] + words[j-7] + Sigma0(words[j-15]) + words[j-16]);
 			}
 
 			for (int j = 0; j < 80; j++) {
-				T1 = h + Ch(e, f, g) + Sigma1(e) + words[j] + K[j];
-				T2 = Sigma0(a) + Maj(a, b, c);
+				T1 = h + Ch(e, f, g) + Sum1(e) + words[j] + K[j];
+				T2 = Sum0(a) + Maj(a, b, c);
 				h = g;
 				g = f;
 				f = e;
@@ -293,12 +293,12 @@ public class SHA2 {
 			}
 
 			for (int j = 16; j < 80; j++) {
-				words[j] = s1(words[j-2] + words[j-7] + s0(words[j-15]) + words[j-16]);
+				words[j] = Sigma1(words[j-2] + words[j-7] + Sigma0(words[j-15]) + words[j-16]);
 			}
 
 			for (int j = 0; j < 80; j++) {
-				T1 = h + Ch(e, f, g) + Sigma1(e) + words[j] + K[j];
-				T2 = Sigma0(a) + Maj(a, b, c);
+				T1 = h + Ch(e, f, g) + Sum1(e) + words[j] + K[j];
+				T2 = Sum0(a) + Maj(a, b, c);
 				h = g;
 				g = f;
 				f = e;
@@ -328,19 +328,19 @@ public class SHA2 {
 	}
 
 
-	private static long s0(long l) {
-		return Long.rotateRight(l, 1) ^ Long.rotateRight(l, 8) ^ (l >> 7);
+	private static long Sigma0(long l) {
+		return Long.rotateRight(l, 1) ^ Long.rotateRight(l, 8) ^ (l >>> 7);
 	}
 	
-	private static long s1(long l) {
-		return Long.rotateRight(l, 19) ^ Long.rotateRight(l, 61) ^ (l >> 6);
+	private static long Sigma1(long l) {
+		return Long.rotateRight(l, 19) ^ Long.rotateRight(l, 61) ^ (l >>> 6);
 	}
 
-	private static long Sigma0(long a) {
+	private static long Sum0(long a) {
 		return Long.rotateRight(a, 28) ^ Long.rotateRight(a, 34) ^ Long.rotateRight(a, 39);
 	}
 
-	private static long Sigma1(long e) {
+	private static long Sum1(long e) {
 		return Long.rotateRight(e, 14) ^ Long.rotateRight(e, 18) ^ Long.rotateRight(e, 41);
 	}
 
