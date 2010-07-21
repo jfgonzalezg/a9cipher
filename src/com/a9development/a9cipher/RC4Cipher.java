@@ -1,6 +1,6 @@
 package com.a9development.a9cipher;
 
-public class RC4Cipher implements A9Cipher {
+public class RC4Cipher {
 	private int[] S;
 	private int[] T;
 	private int keylen;

@@ -27,7 +27,7 @@ package com.a9development.a9cipher;
  * @version 1.0.0
  */
 
-public class DESCipher implements A9Cipher {
+public class DESCipher {
 	private byte[] desKeyBytes;
 	private boolean[] desKeyBits;
 	private boolean[][] desSubKeys;

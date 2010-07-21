@@ -1,6 +1,6 @@
 package com.a9development.a9cipher;
 
-public class SerpentCipher implements A9Cipher {
+public class SerpentCipher {
 
 	private int[] serpentKey;
 	private static final String ALGORITHM = "Serpent";
