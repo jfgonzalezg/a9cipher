@@ -7,7 +7,8 @@ public abstract class BlockCipher {
 	protected int numberOfRounds;
 	protected String mode;
 	protected byte[] key;
-	protected byte[] iv;
+	protected byte[] iv;		// need to add some checking for null/invalid iv values
+	protected byte[][] roundKeys;
 	
 //	public BlockCipher(String algorithm, byte[] key, byte[] iv, String mode, int numberOfRounds, int blockSize) {
 //		this.algorithm = algorithm;
@@ -18,7 +19,18 @@ public abstract class BlockCipher {
 //		this.iv = iv;
 //	}
 	
+	public BlockCipher(String algorithm, byte[] key, byte[] iv, String mode, int blockSize, int numberOfRounds) {
+		this.algorithm = algorithm;
+		this.key = key;
+		this.iv = iv;
+		this.mode = mode;
+		this.blockSize = blockSize;
+		this.numberOfRounds = numberOfRounds;
+		roundKeys = new byte[numberOfRounds][blockSize];
+	}
+	
 	public byte[] encrypt(byte[] plaintext) throws Exception {
+		makeRoundKeys();
 		if (mode == "ECB") {
 			return ecbEncrypt(plaintext);
 		} else if (mode == "CBC") {
@@ -35,6 +47,7 @@ public abstract class BlockCipher {
 	}
 	
 	public byte[] decrypt(byte[] ciphertext) throws Exception {
+		makeRoundKeys();
 		if (mode == "ECB") {
 			return ecbDecrypt(ciphertext);
 		} else if (mode == "CBC") {
@@ -124,6 +137,42 @@ public abstract class BlockCipher {
 		return plaintext;
 	}
 	
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
+	}
+
+	public byte[] getKey() {
+		return key;
+	}
+
+	public void setKey(byte[] key) {
+		this.key = key;
+	}
+
+	public byte[] getIv() {
+		return iv;
+	}
+
+	public void setIv(byte[] iv) {
+		this.iv = iv;
+	}
+
+	public String getAlgorithm() {
+		return algorithm;
+	}
+
+	public int getBlockSize() {
+		return blockSize;
+	}
+
+	public int getNumberOfRounds() {
+		return numberOfRounds;
+	}
+
 	private byte[] cfbEncrypt(byte[] plaintext) {
 		
 		return null;
@@ -158,5 +207,6 @@ public abstract class BlockCipher {
 	protected abstract byte[] decryptBlock(byte[] ciphertext);
 	protected abstract byte[] encryptionRound(byte[] roundBytes, int roundNumber);
 	protected abstract byte[] decryptionRound(byte[] roundBytes, int roundNumber);
+	protected abstract void makeRoundKeys();
 
 }

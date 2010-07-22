@@ -1,9 +1,11 @@
 package com.a9development.cipher;
 
+import java.security.InvalidKeyException;
+
 public class DESCipher extends BlockCipher {
 
 	private boolean[] desKeyBits;
-	private boolean[][] desSubKeys;
+	private boolean[][] bitRoundKeys;
 
 	private final int[] desKeySchedule = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 	private final int[] desIP = {
@@ -89,51 +91,56 @@ public class DESCipher extends BlockCipher {
 
 
 	public DESCipher(byte[] key, byte[] iv, String mode) throws Exception {
+		super("DES", key, iv, mode, 8, 16);
 		if (key.length != 8) {
-			throw new Exception("Invalid key length " + key.length);
-		} else if (!mode.equals("ECB") || !mode.equals("CBC") || !mode.equals("CFB") || !mode.equals("OFB") || !mode.equals("CTR")) {
-			throw new Exception("Invalid mode " + mode);
-		} else if (iv.length != 8 && !mode.equals("ECB")) {
-			throw new Exception("Invalid iv length " + iv.length);
-		} else {
-			this.algorithm = "DES";
-			this.blockSize = 8;
-			this.numberOfRounds = 16;
-			this.mode = mode;
-			this.key = key;
-			this.iv = iv;
-			
-			// create the 64b key from the 8B key
-			desKeyBits = new boolean[64];
-			for (int i = 0; i < 8; i++) {
-				System.arraycopy(A9Utility.byteToBits(key[i]), 0, desKeyBits, i*8, 8);
-			}
+			throw new InvalidKeyException();
 		}
+//		if (key.length != 8) {
+//			throw new Exception("Invalid key length " + key.length);
+//		} else if (!mode.equals("ECB") || !mode.equals("CBC") || !mode.equals("CFB") || !mode.equals("OFB") || !mode.equals("CTR")) {
+//			throw new Exception("Invalid mode " + mode);
+//		} else if (iv.length != 8 && !mode.equals("ECB")) {
+//			throw new Exception("Invalid iv length " + iv.length);
+//		} else {
+//			this.algorithm = "DES";
+//			this.blockSize = 8;
+//			this.numberOfRounds = 16;
+//			this.mode = mode;
+//			this.key = key;
+//			this.iv = iv;
+//			
+//			// create the 64b key from the 8B key
+//			desKeyBits = new boolean[64];
+//			for (int i = 0; i < 8; i++) {
+//				System.arraycopy(A9Utility.byteToBits(key[i]), 0, desKeyBits, i*8, 8);
+//			}
+//		}
 	}
 
 	public DESCipher(byte[] key) throws Exception {
-		if (key.length != 8) {
-			throw new Exception("Invalid key length " + key.length);
-		} else {
-			this.algorithm = "DES";
-			this.blockSize = 8;
-			this.numberOfRounds = 16;
-			this.mode = "ECB";
-			this.key = key;
-			this.iv = new byte[blockSize];
-			
-			desKeyBits = new boolean[64];
-			for (int i = 0; i < 8; i++) {
-				System.arraycopy(A9Utility.byteToBits(key[i]), 0, desKeyBits, i*8, 8);
-			}
-		}
+		super("DES", key, null, "ECB", 8, 16);
+//		if (key.length != 8) {
+//			throw new Exception("Invalid key length " + key.length);
+//		} else {
+//			this.algorithm = "DES";
+//			this.blockSize = 8;
+//			this.numberOfRounds = 16;
+//			this.mode = "ECB";
+//			this.key = key;
+//			this.iv = new byte[blockSize];
+//			
+//			desKeyBits = new boolean[64];
+//			for (int i = 0; i < 8; i++) {
+//				System.arraycopy(A9Utility.byteToBits(key[i]), 0, desKeyBits, i*8, 8);
+//			}
+//		}
 	}
 
 	@Override
 	protected byte[] decryptBlock(byte[] ciphertext) {
 		byte[] plaintext = new byte[ciphertext.length];
 		boolean[] plaintextBits = new boolean[64];
-		makeSubKeys();
+		makeRoundKeys();
 		for (int i = 0; i < 8; i++) {
 			System.arraycopy(A9Utility.byteToBits(ciphertext[i]), 0, plaintextBits, i*8, 8);
 		}
@@ -168,7 +175,7 @@ public class DESCipher extends BlockCipher {
 	protected byte[] encryptBlock(byte[] plaintext) {
 		byte[] ciphertext = new byte[plaintext.length];
 		boolean[] ciphertextBits = new boolean[64];
-		makeSubKeys();
+		makeRoundKeys();
 		for (int i = 0; i < 8; i++) {
 			System.arraycopy(A9Utility.byteToBits(plaintext[i]), 0, ciphertextBits, i*8, 8);
 		}
@@ -208,7 +215,7 @@ public class DESCipher extends BlockCipher {
 		}
 
 		System.arraycopy(right, 0, finished, 0, 32);
-		boolean[] tmp = F(right, desSubKeys[roundNumber]);
+		boolean[] tmp = F(right, bitRoundKeys[roundNumber]);
 		for (int j = 0; j < 32; j++) {
 			right[j] = (tmp[j] ^ left[j]);
 		}
@@ -222,8 +229,9 @@ public class DESCipher extends BlockCipher {
 		return encryptionRound(roundBytes, roundNumber);
 	}
 
-	private void makeSubKeys() {
-		desSubKeys = new boolean[16][48];
+	@Override
+	protected void makeRoundKeys() {
+		bitRoundKeys = new boolean[16][48];
 		boolean[][] desKey56 = new boolean[17][56];
 		boolean[][] desC = new boolean[17][28];
 		boolean[][] desD = new boolean[17][28];
@@ -246,7 +254,7 @@ public class DESCipher extends BlockCipher {
 
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 48; j++) {
-				desSubKeys[i][j] = desKey56[i+1][desPC2[j]-1];
+				bitRoundKeys[i][j] = desKey56[i+1][desPC2[j]-1];
 			}
 		}
 	}

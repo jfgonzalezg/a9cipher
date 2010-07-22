@@ -30,7 +30,7 @@ public class A9Utility {
 	}
 
 	public static int bytesToInt(byte[] b) {
-		return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3];
+		return ((b[0] << 24) & 0xff000000) | ((b[1] << 16) & 0xff0000) | ((b[2] << 8) & 0xff00) | (b[3] & 0xff);
 	}
 
 	public static byte[] longToBytes(long l) {
