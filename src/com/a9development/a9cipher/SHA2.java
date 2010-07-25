@@ -97,7 +97,7 @@ public class SHA2 {
 		}
 
 		for (int i = 0; i < 7; i++) {
-			System.arraycopy(A9Utility.intToByes(H[i]), 0, hashed, 4*i, 4);
+			System.arraycopy(A9Utility.intToBytes(H[i]), 0, hashed, 4*i, 4);
 		}
 
 		return hashed;
@@ -163,7 +163,7 @@ public class SHA2 {
 		}
 
 		for (int i = 0; i < 8; i++) {
-			System.arraycopy(A9Utility.intToByes(H[i]), 0, hashed, 4*i, 4);
+			System.arraycopy(A9Utility.intToBytes(H[i]), 0, hashed, 4*i, 4);
 		}
 
 		return hashed;
