@@ -11,6 +11,8 @@ public class RC4Cipher {
 			throw new Exception("key must be between 1 and 256 bytes");
 		} else {
 			keylen = key.length;
+			S = new int[256];
+			T = new int[256];
 			for (int i = 0; i < 256; i++) {
 				S[i] = i;
 				T[i] = key[i % keylen];
