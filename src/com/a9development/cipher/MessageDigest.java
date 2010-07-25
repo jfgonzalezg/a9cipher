@@ -5,24 +5,28 @@ public abstract class MessageDigest {
 	protected String ALGORITHM;
 	protected int DIGEST_SIZE;
 	protected int BLOCK_SIZE;
-	protected Object H, K;
 	protected int ROUNDS;
+	protected static int[] K;
 	
 	public byte[] digest(byte[] message) {
+		reset();
 		byte[] data = padMessage(message);
+		setup();
 		for (int i = 0; i < data.length / BLOCK_SIZE; i++) {
-			Object[] block = new Object[BLOCK_SIZE];
+			byte[] block = new byte[BLOCK_SIZE];
 			System.arraycopy(data, i * BLOCK_SIZE, block, 0, BLOCK_SIZE);
-			processMessage(block);
+			update(i);
 		}
-		return buildHash(data);
+		return data;
 	}
 
+	protected abstract void setup();
+	
 	protected abstract byte[] padMessage(byte[] data);
 	
-	protected abstract void processMessage(Object[] data);
+	protected abstract void update(int round);
 	
-	protected abstract byte[] buildHash(byte[] data);
+	protected abstract void reset();
 	
 	public String getAlgorithm() {
 		return ALGORITHM;
