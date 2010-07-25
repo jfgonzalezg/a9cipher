@@ -1,10 +1,10 @@
-package com.a9development.ciphertestharness;
+package com.a9development.a9cipher.testharness;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.a9development.cipher.A9Utility;
+import com.a9development.a9cipher.A9Utility;
 
 public class A9UtilityTests {
 

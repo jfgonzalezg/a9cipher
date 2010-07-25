@@ -232,18 +232,21 @@ public class DESCipher extends BlockCipher {
 	@Override
 	protected void makeRoundKeys() {
 		bitRoundKeys = new boolean[16][48];
+		desKeyBits = new boolean[64];
 		boolean[][] desKey56 = new boolean[17][56];
 		boolean[][] desC = new boolean[17][28];
 		boolean[][] desD = new boolean[17][28];
 
+		for (int i = 0; i < 8; i++) {
+			System.arraycopy(A9Utility.byteToBits(key[i]), 0, desKeyBits, 8*i, 8);
+		}
+		
 		for (int i = 0; i < 56; i++) {
 			desKey56[0][i] = desKeyBits[desPC1[i]-1]; 
 		}
 
-		for (int i = 0; i < 28; i++) {
-			desC[0][i] = desKey56[0][i];
-			desD[0][i] = desKey56[0][28+i];
-		}
+		System.arraycopy(desKey56[0], 0, desC[0], 0, 28);
+		System.arraycopy(desKey56[0], 28, desD[0], 0, 28);
 
 		for (int i = 1; i < 17; i++) {
 			for (int j = 0; j < 28; j++) {

@@ -1,4 +1,4 @@
-package com.a9development.ciphertestharness;
+package com.a9development.a9cipher.testharness;
 
 import static org.junit.Assert.*;
 

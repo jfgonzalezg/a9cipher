@@ -1,7 +1,12 @@
-package com.a9development.a9ciphertestharness;
+package com.a9development.a9cipher.testharness;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+
+//import com.a9development.a9cipher.testharness.A9UtilityTests;
+//import com.a9development.a9cipher.testharness.DESCipherTests;
+//import com.a9development.a9cipher.testharness.RijndaelCipherTests;
+//import com.a9development.a9cipher.testharness.SHA1Tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

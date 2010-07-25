@@ -1,4 +1,4 @@
-package com.a9development.a9ciphertestharness;
+package com.a9development.cipher.testharness;
 
 import static org.junit.Assert.*;
 
@@ -7,8 +7,8 @@ import java.security.NoSuchAlgorithmException;
 
 import org.junit.Test;
 
-import com.a9development.a9cipher.A9Utility;
-import com.a9development.a9cipher.SHA1;
+import com.a9development.cipher.A9Utility;
+import com.a9development.cipher.SHA1;
 
 public class SHA1Tests {
 
