@@ -67,7 +67,7 @@ public class RijndaelCipher extends BlockCipher {
 	@Override
 	protected byte[] encryptBlock(byte[] plaintext) {
 		byte[] ciphertext = addRoundKey(plaintext, roundKeys[0]);
-		for (int i = 1; i < numberOfRounds; i++) {
+		for (int i = 1; i < numberOfRounds-1; i++) {
 			ciphertext = encryptionRound(ciphertext, i);
 		}
 		return addRoundKey(shiftRows(subBytes(ciphertext)), roundKeys[10]);
@@ -75,22 +75,26 @@ public class RijndaelCipher extends BlockCipher {
 
 	@Override
 	protected byte[] decryptBlock(byte[] ciphertext) {
-		// TODO Auto-generated method stub
-		return null;
+		byte[] plaintext = addRoundKey(ciphertext, roundKeys[10]);
+		for (int i = 9; i > 0; i--) {
+			plaintext = decryptionRound(plaintext, i);
+		}
+		return addRoundKey(inverseSubBytes(inverseShiftRows(plaintext)), roundKeys[0]);
 	}
 
 	@Override
 	protected byte[] encryptionRound(byte[] roundBytes, int roundNumber) {
-		byte[] theReturn = roundBytes.clone();
-		theReturn = subBytes(theReturn);
-		theReturn = shiftRows(theReturn);
-		theReturn = mixColumns(theReturn);
-		theReturn = addRoundKey(theReturn, roundKeys[roundNumber]);
-		return theReturn;
+		return addRoundKey(mixColumns(shiftRows(subBytes(roundBytes))), roundKeys[roundNumber]);
 	}
 
 	@Override
 	protected byte[] decryptionRound(byte[] roundBytes, int roundNumber) {
+//		byte[] theReturn = roundBytes.clone();
+//		theReturn = inverseShiftRows(theReturn);
+//		theReturn = inverseSubBytes(theReturn);
+//		theReturn = addRoundKey(theReturn, roundKeys[roundNumber]);
+//		theReturn = inverseMixColumns(theReturn);
+//		return theReturn;
 		return inverseMixColumns(addRoundKey(inverseSubBytes(inverseShiftRows(roundBytes)), roundKeys[roundNumber]));
 	}
 	
@@ -105,26 +109,22 @@ public class RijndaelCipher extends BlockCipher {
 	private byte[] inverseSubBytes(byte[] b) {
 		byte[] subbed = new byte[16];
 		for (int i = 0; i < 16; i++) {
-			subbed[i] = rijndaelInverseSBox[(b[i] >>> 4) & 0xff][b[i] & 0xf];
+			subbed[i] = rijndaelInverseSBox[(b[i] >>> 4) & 0xf][b[i] & 0xf];
 		}
 		return subbed;
 	}
 	
 	private byte[] shiftRows(byte[] b) {
 		byte[] shifted = b.clone();
-		shifted[0] = b[0];
 		shifted[1] = b[5];
 		shifted[2] = b[10];
 		shifted[3] = b[15];
-		shifted[4] = b[4];
 		shifted[5] = b[9];
 		shifted[6] = b[14];
 		shifted[7] = b[3];
-		shifted[8] = b[8];
 		shifted[9] = b[13];
 		shifted[10] = b[2];
 		shifted[11] = b[7];
-		shifted[12] = b[12];
 		shifted[13] = b[1];
 		shifted[14] = b[6];
 		shifted[15] = b[11];
@@ -133,18 +133,18 @@ public class RijndaelCipher extends BlockCipher {
 	
 	private byte[] inverseShiftRows(byte[] b) {
 		byte[] shifted = b.clone();
-		shifted[4] = b[7];
-		shifted[5] = b[4];
-		shifted[6] = b[5];
-		shifted[7] = b[6];
-		shifted[8] = b[10];
-		shifted[9] = b[11];
-		shifted[10] = b[8];
-		shifted[11] = b[9];
-		shifted[12] = b[13];
-		shifted[13] = b[14];
-		shifted[14] = b[15];
-		shifted[15] = b[12];
+		shifted[1] = b[13];
+		shifted[2] = b[10];
+		shifted[3] = b[7];
+		shifted[5] = b[1];
+		shifted[6] = b[14];
+		shifted[7] = b[11];
+		shifted[9] = b[5];
+		shifted[10] = b[2];
+		shifted[11] = b[15];
+		shifted[13] = b[9];
+		shifted[14] = b[6];
+		shifted[15] = b[3];
 		return shifted;
 	}
 	
@@ -192,6 +192,7 @@ public class RijndaelCipher extends BlockCipher {
 	}
 	
 	protected void makeRoundKeys() {
+		roundKeys = new byte[11][16];
 		int[] w = new int[44];
 		int temp;
 		for (int i = 0; i < 4; i++) {
