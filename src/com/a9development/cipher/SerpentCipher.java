@@ -1,4 +1,4 @@
-package com.a9development.a9cipher;
+package com.a9development.cipher;
 
 public class SerpentCipher {
 
