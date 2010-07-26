@@ -12,7 +12,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { A9UtilityTests.class, DESCipherTests.class, RijndaelCipherTests.class, SHA1Tests.class } )
+@Suite.SuiteClasses( { A9UtilityTests.class, DESCipherTests.class, RijndaelCipherTests.class } )
 public class AllTests {
 
 	public static Test suite() {
