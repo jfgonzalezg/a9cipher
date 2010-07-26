@@ -208,7 +208,7 @@ public class SHA2 {
 			}
 
 			for (int j = 16; j < 80; j++) {
-				words[j] = Sigma1(words[j-2] + words[j-7] + Sigma0(words[j-15]) + words[j-16]);
+				words[j] = Sigma1(words[j-2]) + words[j-7] + Sigma0(words[j-15]) + words[j-16];
 			}
 
 			for (int j = 0; j < 80; j++) {
@@ -274,10 +274,10 @@ public class SHA2 {
 				0x5FCB6FAB3AD6FAECL, 0x6C44198C4A475817L
 		};
 		long[] H = {
-				0xcbbb9d5dc1059ed8L, 0x629a292a367cd507L,
-				0x9159015a3070dd17L, 0x152fecd8f70e5939L,
-				0x67332667ffc00b31L, 0x8eb44a8768581511L,
-				0xdb0c2e0d64f98fa7L, 0x47b5481dbefa4fa4L
+				0x6A09E667F3BCC908L, 0xBB67AE8584CAA73BL,
+				0x3C6EF372FE94F82BL, 0xA54FF53A5F1D36F1L,
+				0x510E527FADE682D1L, 0x9B05688C2B3E6C1FL,
+				0x1F83D9ABFB41BD6BL, 0x5BE0CD19137E2179L
 		};
 
 		for (int i = 0; i < padded.length / 128; i++) {
@@ -293,7 +293,7 @@ public class SHA2 {
 			}
 
 			for (int j = 16; j < 80; j++) {
-				words[j] = Sigma1(words[j-2] + words[j-7] + Sigma0(words[j-15]) + words[j-16]);
+				words[j] = Sigma1(words[j-2]) + words[j-7] + Sigma0(words[j-15]) + words[j-16];
 			}
 
 			for (int j = 0; j < 80; j++) {

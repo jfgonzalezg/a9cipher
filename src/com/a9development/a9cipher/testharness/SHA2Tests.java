@@ -23,7 +23,7 @@ public class SHA2Tests {
 //		String expectedString = A9Utility.bytesToHex(md1.digest(MESSAGE_0.getBytes()));
 		String actualString = A9Utility.bytesToHex(md2.digest(MESSAGE_0.getBytes()));
 //		assertEquals("Result", expectedString, actualString);
-		assertEquals("Result", "d14a028c 2a3a2bc9 476102bb 288234c4 15a2b01f 828ea62a c5b3e42f", actualString);
+		assertEquals("Result", "23097d22 3405d822 8642a477 bda255b3 2aadbce4 bda0b3f7 e36c9da7", actualString);
 	}
 
 	@Test
