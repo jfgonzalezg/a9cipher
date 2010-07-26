@@ -151,7 +151,7 @@ public class DESCipher extends BlockCipher {
 		// Rounds
 		byte[] roundBytes = new byte[8];
 		roundBytes = A9Utility.bitsTo8Bytes(plaintextBits);
-		for (int i = numberOfRounds; i > 0; i--) {
+		for (int i = ROUNDS; i > 0; i--) {
 			roundBytes = encryptionRound(roundBytes, i-1);
 		}
 		for (int i = 0; i < 8; i++) {
@@ -186,7 +186,7 @@ public class DESCipher extends BlockCipher {
 		// Rounds
 		byte[] roundBytes = new byte[8];
 		roundBytes = A9Utility.bitsTo8Bytes(ciphertextBits);
-		for (int i = 0; i < numberOfRounds; i++) {
+		for (int i = 0; i < ROUNDS; i++) {
 			roundBytes = encryptionRound(roundBytes, i);
 		}
 		for (int i = 0; i < 8; i++) {

@@ -60,4 +60,22 @@ public class A9Utility {
 		return b;
 	}
 
+	public static int getBit(int x, int i) {
+		return (x >>> i) & 0x01;
+	}
+
+	public static int getBit(int[] x, int i) {
+		return (x[i / 32] >>> (i % 32)) & 0x01;
+	}
+	
+	public static void setBit(int[] x, int i, int v) {
+		if ((v & 0x01) == 1)
+			x[i / 32] |= 1 << (i % 32); // set it
+		else
+			x[i / 32] &= ~(1 << (i % 32)); // clear it
+	}
+	
+	public static int getNibble(int x, int i) {
+		return (x >>> (4 * i)) & 0x0F;
+	}
 }

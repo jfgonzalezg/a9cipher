@@ -2,10 +2,11 @@ package com.a9development.cipher;
 
 public abstract class BlockCipher {
 
-	protected String algorithm;
-	protected int blockSize;
-	protected int numberOfRounds;
-	protected String mode;
+	protected String ALGORITHM;
+	protected int BLOCK_SIZE;
+	protected int ROUNDS;
+	protected String MODE;
+	
 	protected byte[] key;
 	protected byte[] iv;		// need to add some checking for null/invalid iv values
 	protected byte[][] roundKeys;
@@ -20,26 +21,26 @@ public abstract class BlockCipher {
 //	}
 	
 	public BlockCipher(String algorithm, byte[] key, byte[] iv, String mode, int blockSize, int numberOfRounds) {
-		this.algorithm = algorithm;
+		this.ALGORITHM = algorithm;
 		this.key = key;
 		this.iv = iv;
-		this.mode = mode;
-		this.blockSize = blockSize;
-		this.numberOfRounds = numberOfRounds;
+		this.MODE = mode;
+		this.BLOCK_SIZE = blockSize;
+		this.ROUNDS = numberOfRounds;
 		roundKeys = new byte[numberOfRounds][blockSize];
 	}
 	
 	public byte[] encrypt(byte[] plaintext) throws Exception {
 		makeRoundKeys();
-		if (mode == "ECB") {
+		if (MODE == "ECB") {
 			return ecbEncrypt(plaintext);
-		} else if (mode == "CBC") {
+		} else if (MODE == "CBC") {
 			return cbcEncrypt(plaintext);
-		} else if (mode == "CFB") {
+		} else if (MODE == "CFB") {
 			return cfbEncrypt(plaintext);
-		} else if (mode == "OFB") {
+		} else if (MODE == "OFB") {
 			return ofbEncrypt(plaintext);
-		} else if (mode == "CTR") {
+		} else if (MODE == "CTR") {
 			return ctrEncrypt(plaintext);
 		} else {
 			throw new Exception("Invalid mode of operation");
@@ -48,15 +49,15 @@ public abstract class BlockCipher {
 	
 	public byte[] decrypt(byte[] ciphertext) throws Exception {
 		makeRoundKeys();
-		if (mode == "ECB") {
+		if (MODE == "ECB") {
 			return ecbDecrypt(ciphertext);
-		} else if (mode == "CBC") {
+		} else if (MODE == "CBC") {
 			return cbcDecrypt(ciphertext);
-		} else if (mode == "CFB") {
+		} else if (MODE == "CFB") {
 			return cfbDecrypt(ciphertext);
-		} else if (mode == "OFB") {
+		} else if (MODE == "OFB") {
 			return ofbDecrypt(ciphertext);
-		} else if (mode == "CTR") {
+		} else if (MODE == "CTR") {
 			return ctrDecrypt(ciphertext);
 		} else {
 			throw new Exception("Invalid mode of operation");
@@ -65,84 +66,84 @@ public abstract class BlockCipher {
 	
 	private byte[] ecbEncrypt(byte[] plaintext) {
 		int textLength = plaintext.length;
-		if (textLength % blockSize != 0) {
-			textLength += blockSize - (plaintext.length % blockSize);
+		if (textLength % BLOCK_SIZE != 0) {
+			textLength += BLOCK_SIZE - (plaintext.length % BLOCK_SIZE);
 		}
-		int numBlocks = textLength / blockSize;
+		int numBlocks = textLength / BLOCK_SIZE;
 		byte[] ciphertext = new byte[textLength];
 		for (int i = 0; i < numBlocks; i++) {
-			System.arraycopy(encryptBlock(plaintext), 0, ciphertext, i * blockSize, blockSize);
+			System.arraycopy(encryptBlock(plaintext), 0, ciphertext, i * BLOCK_SIZE, BLOCK_SIZE);
 		}
 		return ciphertext;
 	}
 	
 	private byte[] ecbDecrypt(byte[] ciphertext) {
 		int textLength = ciphertext.length;
-		if (textLength % blockSize != 0) {
-			textLength += blockSize - (ciphertext.length % blockSize);
+		if (textLength % BLOCK_SIZE != 0) {
+			textLength += BLOCK_SIZE - (ciphertext.length % BLOCK_SIZE);
 		}
-		int numBlocks = textLength / blockSize;
+		int numBlocks = textLength / BLOCK_SIZE;
 		byte[] plaintext = new byte[textLength];
 		for (int i = 0; i < numBlocks; i++) {
-			System.arraycopy(decryptBlock(ciphertext), 0, plaintext, i * blockSize, blockSize);
+			System.arraycopy(decryptBlock(ciphertext), 0, plaintext, i * BLOCK_SIZE, BLOCK_SIZE);
 		}
 		return plaintext;
 	}
 	
 	private byte[] cbcEncrypt(byte[] plaintext) {
 		int textLength = plaintext.length;
-		if (textLength % blockSize != 0) {
-			textLength += blockSize - (plaintext.length % blockSize);
+		if (textLength % BLOCK_SIZE != 0) {
+			textLength += BLOCK_SIZE - (plaintext.length % BLOCK_SIZE);
 		}
-		int numBlocks = textLength / blockSize;
+		int numBlocks = textLength / BLOCK_SIZE;
 		byte[] ciphertext = new byte[textLength];
-		byte[] block = new byte[blockSize];
-		System.arraycopy(plaintext, 0, block, 0, blockSize);		
-		for (int j = 0; j < blockSize; j++) {
+		byte[] block = new byte[BLOCK_SIZE];
+		System.arraycopy(plaintext, 0, block, 0, BLOCK_SIZE);		
+		for (int j = 0; j < BLOCK_SIZE; j++) {
 			block[j] ^= iv[j];
 		}
-		System.arraycopy(encryptBlock(block), 0, ciphertext, 0, blockSize);
+		System.arraycopy(encryptBlock(block), 0, ciphertext, 0, BLOCK_SIZE);
 		for (int i = 1; i < numBlocks; i++) {
-			System.arraycopy(plaintext, i*blockSize, block, 0, blockSize);
-			for (int j = 0; j < blockSize; j++) {
-				block[j] ^= ciphertext[j + ((i - 1) * blockSize)];			// This is kinda nasty looking, and I doubt it's functionality as well... O_-
+			System.arraycopy(plaintext, i*BLOCK_SIZE, block, 0, BLOCK_SIZE);
+			for (int j = 0; j < BLOCK_SIZE; j++) {
+				block[j] ^= ciphertext[j + ((i - 1) * BLOCK_SIZE)];			// This is kinda nasty looking, and I doubt it's functionality as well... O_-
 			}
-			System.arraycopy(encryptBlock(block), 0, ciphertext, i*blockSize, blockSize);
+			System.arraycopy(encryptBlock(block), 0, ciphertext, i*BLOCK_SIZE, BLOCK_SIZE);
 		}
 		return ciphertext;
 	}
 	
 	private byte[] cbcDecrypt(byte[] ciphertext) {
 		int textLength = ciphertext.length;
-		if (textLength % blockSize != 0) {
-			textLength += blockSize - (ciphertext.length % blockSize);
+		if (textLength % BLOCK_SIZE != 0) {
+			textLength += BLOCK_SIZE - (ciphertext.length % BLOCK_SIZE);
 		}
-		int numBlocks = textLength / blockSize;
+		int numBlocks = textLength / BLOCK_SIZE;
 		byte[] plaintext = new byte[textLength];
-		byte[] block = new byte[blockSize];
-		System.arraycopy(ciphertext, 0, block, 0, blockSize);
+		byte[] block = new byte[BLOCK_SIZE];
+		System.arraycopy(ciphertext, 0, block, 0, BLOCK_SIZE);
 		block = decryptBlock(block.clone());			// there's no way this works...
-		for (int j = 0; j < blockSize; j++) {
+		for (int j = 0; j < BLOCK_SIZE; j++) {
 			block[j] ^= iv[j];
 		}
-		System.arraycopy(block, 0, plaintext, 0, blockSize);
+		System.arraycopy(block, 0, plaintext, 0, BLOCK_SIZE);
 		for (int i = 1; i < numBlocks; i++) {
-			System.arraycopy(ciphertext, i*blockSize, block, 0, blockSize);
+			System.arraycopy(ciphertext, i*BLOCK_SIZE, block, 0, BLOCK_SIZE);
 			block = decryptBlock(block.clone());		// there's no way this works...
-			for (int j = 0; j < blockSize; j++) {
-				block[j] ^= ciphertext[j + ((i - 1) * blockSize)];
+			for (int j = 0; j < BLOCK_SIZE; j++) {
+				block[j] ^= ciphertext[j + ((i - 1) * BLOCK_SIZE)];
 			}
-			System.arraycopy(block, 0, plaintext, i*blockSize, blockSize);
+			System.arraycopy(block, 0, plaintext, i*BLOCK_SIZE, BLOCK_SIZE);
 		}
 		return plaintext;
 	}
 	
 	public String getMode() {
-		return mode;
+		return MODE;
 	}
 
 	public void setMode(String mode) {
-		this.mode = mode;
+		this.MODE = mode;
 	}
 
 	public byte[] getKey() {
@@ -162,15 +163,15 @@ public abstract class BlockCipher {
 	}
 
 	public String getAlgorithm() {
-		return algorithm;
+		return ALGORITHM;
 	}
 
 	public int getBlockSize() {
-		return blockSize;
+		return BLOCK_SIZE;
 	}
 
 	public int getNumberOfRounds() {
-		return numberOfRounds;
+		return ROUNDS;
 	}
 
 	private byte[] cfbEncrypt(byte[] plaintext) {

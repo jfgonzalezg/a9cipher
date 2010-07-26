@@ -67,7 +67,7 @@ public class RijndaelCipher extends BlockCipher {
 	@Override
 	protected byte[] encryptBlock(byte[] plaintext) {
 		byte[] ciphertext = addRoundKey(plaintext, roundKeys[0]);
-		for (int i = 1; i < numberOfRounds-1; i++) {
+		for (int i = 1; i < ROUNDS-1; i++) {
 			ciphertext = encryptionRound(ciphertext, i);
 		}
 		return addRoundKey(shiftRows(subBytes(ciphertext)), roundKeys[10]);
