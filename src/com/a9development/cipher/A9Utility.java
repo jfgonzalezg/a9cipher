@@ -78,4 +78,5 @@ public class A9Utility {
 	public static int getNibble(int x, int i) {
 		return (x >>> (4 * i)) & 0x0F;
 	}
+	
 }

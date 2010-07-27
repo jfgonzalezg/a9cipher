@@ -6,20 +6,20 @@ public abstract class BlockCipher {
 	protected int BLOCK_SIZE;
 	protected int ROUNDS;
 	protected String MODE;
-	
+
 	protected byte[] key;
 	protected byte[] iv;		// need to add some checking for null/invalid iv values
 	protected byte[][] roundKeys;
-	
-//	public BlockCipher(String algorithm, byte[] key, byte[] iv, String mode, int numberOfRounds, int blockSize) {
-//		this.algorithm = algorithm;
-//		this.blockSize = blockSize;
-//		this.numberOfRounds = numberOfRounds;
-//		this.mode = mode;
-//		this.key = key;
-//		this.iv = iv;
-//	}
-	
+
+	//	public BlockCipher(String algorithm, byte[] key, byte[] iv, String mode, int numberOfRounds, int blockSize) {
+	//		this.algorithm = algorithm;
+	//		this.blockSize = blockSize;
+	//		this.numberOfRounds = numberOfRounds;
+	//		this.mode = mode;
+	//		this.key = key;
+	//		this.iv = iv;
+	//	}
+
 	public BlockCipher(String algorithm, byte[] key, byte[] iv, String mode, int blockSize, int numberOfRounds) {
 		this.ALGORITHM = algorithm;
 		this.key = key;
@@ -29,7 +29,7 @@ public abstract class BlockCipher {
 		this.ROUNDS = numberOfRounds;
 		roundKeys = new byte[numberOfRounds][blockSize];
 	}
-	
+
 	public byte[] encrypt(byte[] plaintext) throws Exception {
 		makeRoundKeys();
 		if (MODE == "ECB") {
@@ -46,7 +46,7 @@ public abstract class BlockCipher {
 			throw new Exception("Invalid mode of operation");
 		}
 	}
-	
+
 	public byte[] decrypt(byte[] ciphertext) throws Exception {
 		makeRoundKeys();
 		if (MODE == "ECB") {
@@ -63,7 +63,7 @@ public abstract class BlockCipher {
 			throw new Exception("Invalid mode of operation");
 		}
 	}
-	
+
 	private byte[] ecbEncrypt(byte[] plaintext) {
 		int textLength = plaintext.length;
 		if (textLength % BLOCK_SIZE != 0) {
@@ -76,7 +76,7 @@ public abstract class BlockCipher {
 		}
 		return ciphertext;
 	}
-	
+
 	private byte[] ecbDecrypt(byte[] ciphertext) {
 		int textLength = ciphertext.length;
 		if (textLength % BLOCK_SIZE != 0) {
@@ -89,7 +89,7 @@ public abstract class BlockCipher {
 		}
 		return plaintext;
 	}
-	
+
 	private byte[] cbcEncrypt(byte[] plaintext) {
 		int textLength = plaintext.length;
 		if (textLength % BLOCK_SIZE != 0) {
@@ -112,7 +112,7 @@ public abstract class BlockCipher {
 		}
 		return ciphertext;
 	}
-	
+
 	private byte[] cbcDecrypt(byte[] ciphertext) {
 		int textLength = ciphertext.length;
 		if (textLength % BLOCK_SIZE != 0) {
@@ -137,7 +137,7 @@ public abstract class BlockCipher {
 		}
 		return plaintext;
 	}
-	
+
 	public String getMode() {
 		return MODE;
 	}
@@ -175,35 +175,71 @@ public abstract class BlockCipher {
 	}
 
 	private byte[] cfbEncrypt(byte[] plaintext) {
-		
+		// TODO complete
 		return null;
 	}
 
 	private byte[] cfbDecrypt(byte[] ciphertext) {
-		
-		return null;
-	}
-	
-	private byte[] ofbEncrypt(byte[] plaintext) {
-		
+		// TODO complete
 		return null;
 	}
 
-	private byte[] ofbDecrypt(byte[] ciphertext) {
-		
-		return null;
+	private byte[] ofbEncrypt(byte[] plaintext) throws Exception {
+		int textLength = plaintext.length;
+		if (textLength % BLOCK_SIZE != 0) {
+			textLength += BLOCK_SIZE - (plaintext.length % BLOCK_SIZE);
+		}
+		int numBlocks = textLength / BLOCK_SIZE;
+		byte[] ciphertext = new byte[textLength];
+		if (iv.length != BLOCK_SIZE) {
+			throw new Exception("iv must be " + BLOCK_SIZE + " bytes");	
+		} else {
+			System.arraycopy(encryptBlock(iv), 0, ciphertext, 0, BLOCK_SIZE);
+			for (int i = 1; i < numBlocks; i++) {
+				byte[] temp = new byte[BLOCK_SIZE];
+				System.arraycopy(ciphertext, BLOCK_SIZE * (i -1), temp, 0, BLOCK_SIZE);
+				System.arraycopy(encryptBlock(temp), 0, ciphertext, 0, BLOCK_SIZE);
+			}
+			for (int i = 0; i < plaintext.length; i++) {
+				ciphertext[i] ^= plaintext[i];
+			}
+			return ciphertext;
+		}
 	}
-	
+
+	private byte[] ofbDecrypt(byte[] ciphertext) throws Exception {
+		int textLength = ciphertext.length;
+		if (textLength % BLOCK_SIZE != 0) {
+			textLength += BLOCK_SIZE - (ciphertext.length % BLOCK_SIZE);
+		}
+		int numBlocks = textLength / BLOCK_SIZE;
+		byte[] plaintext = new byte[textLength];
+		if (iv.length != BLOCK_SIZE) {
+			throw new Exception("iv must be " + BLOCK_SIZE + " bytes");	
+		} else {
+			System.arraycopy(encryptBlock(iv), 0, plaintext, 0, BLOCK_SIZE);
+			for (int i = 1; i < numBlocks; i++) {
+				byte[] temp = new byte[BLOCK_SIZE];
+				System.arraycopy(plaintext, BLOCK_SIZE * (i -1), temp, 0, BLOCK_SIZE);
+				System.arraycopy(encryptBlock(temp), 0, plaintext, 0, BLOCK_SIZE);
+			}
+			for (int i = 0; i < ciphertext.length; i++) {
+				plaintext[i] ^= ciphertext[i];
+			}
+			return plaintext;
+		}
+	}
+
 	private byte[] ctrEncrypt(byte[] plaintext) {
-		
+		// TODO complete
 		return null;
 	}
 
 	private byte[] ctrDecrypt(byte[] ciphertext) {
-		
+		// TODO complete
 		return null;
 	}
-	
+
 	protected abstract byte[] encryptBlock(byte[] plaintext);
 	protected abstract byte[] decryptBlock(byte[] ciphertext);
 	protected abstract byte[] encryptionRound(byte[] roundBytes, int roundNumber);
