@@ -19,6 +19,7 @@ package com.a9development.a9cipher;
 
 import java.security.NoSuchAlgorithmException;
 
+@Deprecated
 public class SHA2 {
 
 	private String ALGORITHM;

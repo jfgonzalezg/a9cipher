@@ -17,6 +17,7 @@
 
 package com.a9development.a9cipher;
 
+@Deprecated
 public class A9Utility {
 
 	public static String bytesToHex(byte[] b) {

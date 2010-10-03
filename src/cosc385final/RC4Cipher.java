@@ -17,6 +17,7 @@
 
 package cosc385final;
 
+@Deprecated
 public class RC4Cipher {
 	private int[] S;
 	private int[] T;

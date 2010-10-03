@@ -27,6 +27,7 @@ package com.a9development.a9cipher;
  * @version 1.0.0
  */
 
+@Deprecated
 public class RijndaelCipher {
 	private byte[] rijndaelKey;
 	private static final String ALGORITHM = "Rijndael";

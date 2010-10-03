@@ -20,6 +20,7 @@ package com.a9development.a9cipher;
 // A wrapper around the RijndaelCipher class that lets it be used as AESCipher
 // as well. This provides no new functionality other than to allow the
 // RijndaelCipher class to be called something else.
+@Deprecated
 public class AESCipher {
 	private RijndaelCipher rd;
 	private final static String ALGORITHM = "AES";

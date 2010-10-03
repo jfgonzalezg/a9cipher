@@ -17,6 +17,7 @@
 
 package com.a9development.a9cipher;
 
+@Deprecated
 public class SHA1 {
 
 	static int H0, H1, H2, H3, H4;

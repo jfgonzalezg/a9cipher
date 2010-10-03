@@ -21,6 +21,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class CipherMain {
 
 	public static void main(String[] args) {

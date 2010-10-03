@@ -19,6 +19,7 @@ package cosc385final;
 
 import java.security.NoSuchAlgorithmException;
 
+@Deprecated
 public class SHA2 {
 
 	private String ALGORITHM;

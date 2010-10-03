@@ -19,6 +19,7 @@ package com.a9development.a9cipher;
 
 import java.io.Serializable;
 
+@Deprecated
 public class Rule30CA implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

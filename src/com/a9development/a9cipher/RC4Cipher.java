@@ -17,6 +17,7 @@
 
 package com.a9development.a9cipher;
 
+@Deprecated
 public class RC4Cipher {
 	private int[] S;
 	private int[] T;

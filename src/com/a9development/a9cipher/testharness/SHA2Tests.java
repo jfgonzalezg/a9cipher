@@ -27,6 +27,7 @@ import org.junit.Test;
 import com.a9development.a9cipher.A9Utility;
 import com.a9development.a9cipher.SHA2;
 
+@Deprecated
 public class SHA2Tests {
 
 	private final String MESSAGE_0 = "abc";

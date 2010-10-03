@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.junit.Test;
 
+@Deprecated
 public class SHA1Tests {
 
 	private final String MESSAGE_0 = "";

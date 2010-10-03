@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import com.a9development.a9cipher.A9Utility;
 
+@Deprecated
 public class A9UtilityTests {
 
 	byte[] B1 = {(byte) 0x02, (byte) 0x46, (byte) 0x8a, (byte) 0xce, (byte) 0xec, (byte) 0xa8, (byte) 0x64, (byte) 0x20};

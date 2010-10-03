@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+@Deprecated
 public class RC4CipherTests {
 
 	@Test

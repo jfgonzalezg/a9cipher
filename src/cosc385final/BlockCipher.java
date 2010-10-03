@@ -17,6 +17,7 @@
 
 package cosc385final;
 
+@Deprecated
 public abstract class BlockCipher {
 
 	protected String ALGORITHM;

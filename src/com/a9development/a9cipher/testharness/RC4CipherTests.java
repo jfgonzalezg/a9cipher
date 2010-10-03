@@ -24,6 +24,7 @@ import org.junit.Test;
 import com.a9development.a9cipher.A9Utility;
 import com.a9development.a9cipher.RC4Cipher;
 
+@Deprecated
 public class RC4CipherTests {
 
 	@Test

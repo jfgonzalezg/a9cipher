@@ -17,6 +17,7 @@
 
 package cosc385final;
 
+@Deprecated
 public class Radix64 {
 
 	private final static char[] code = {

@@ -19,6 +19,7 @@ package cosc385final;
 
 import java.security.InvalidKeyException;
 
+@Deprecated
 public class DESCipher extends BlockCipher {
 
 	private boolean[] desKeyBits;

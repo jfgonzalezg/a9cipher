@@ -17,6 +17,7 @@
 
 package cosc385final;
 
+@Deprecated
 public class A9Utility {
 
 	public static String bytesToHex(byte[] b) {
