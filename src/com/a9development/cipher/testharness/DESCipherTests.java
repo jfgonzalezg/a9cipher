@@ -17,11 +17,11 @@
 
 package com.a9development.cipher.testharness;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.a9development.cipher.A9Utility;
+import com.a9development.A9Utility;
 import com.a9development.cipher.DESCipher;
 
 public class DESCipherTests {

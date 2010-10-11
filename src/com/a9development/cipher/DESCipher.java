@@ -19,6 +19,8 @@ package com.a9development.cipher;
 
 import java.security.InvalidKeyException;
 
+import com.a9development.A9Utility;
+
 public class DESCipher extends BlockCipher {
 
 	private boolean[] desKeyBits;

@@ -17,6 +17,8 @@
 
 package com.a9development.cipher;
 
+import com.a9development.A9Utility;
+
 public class SerpentCipher extends BlockCipher {
 
 	private static final byte[][] Sbox = new byte[][] {

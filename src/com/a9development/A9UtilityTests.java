@@ -15,13 +15,11 @@
 //    You should have received a copy of the GNU Lesser General Public License
 //    along with A9Cipher.  If not, see <http://www.gnu.org/licenses/>.
 
-package com.a9development.cipher.testharness;
+package com.a9development;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-
-import com.a9development.cipher.A9Utility;
 
 public class A9UtilityTests {
 
