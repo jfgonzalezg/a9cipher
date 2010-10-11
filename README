@@ -1,5 +1,9 @@
 README FOR A9CIPHER
 
+Project home: http://code.google.com/p/a9cipher/
+
+For a local copy, use mercurial with "hg clone https://a9cipher.googlecode.com/hg/ a9cipher"
+
 __Contact_Info__
 Dan Kotowski
 dan.kotowski@gmail.com
