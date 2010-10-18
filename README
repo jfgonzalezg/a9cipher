@@ -2,7 +2,26 @@ README FOR A9CIPHER
 
 Project home: http://code.google.com/p/a9cipher/
 
-For a local copy, use mercurial with "hg clone https://a9cipher.googlecode.com/hg/ a9cipher"
+For a local copy, use mercurial with
+"hg clone https://a9cipher.googlecode.com/hg/ a9cipher"
+
+The packages com.a9development.a9cipher and any subpackages are deprecated and
+should not be used. Instead use com.a9development.cipher and it's subpackages.
+These deprecated packages are left included as a reference model of how not to
+code properly. They were made deprecated due to their poor original layout and
+planning. As the project moved forward, a new class layout and inheritence
+model evolved, allowing for easier integration of future ciphers.
+
+The com.a9development package contains 2 classes: A9Utility and A9UtilityTests.
+These classes are designed to provide a bunch of static utility functions and
+a set of JUnit tests for these functions, respectively. 
+
+The cosc385final package contains the source code that was turned in for a
+final grade at the completion of the directed study course this project was
+created for. It is not to be edited and is there merely as a sort of time 
+capsule reflecting the state of the working codebase as of July 31 2010. It
+contains classes from the original (now deprecated) com.a9development.a9cipher
+packages as well as the newer com.a9development.cipher packages.
 
 __Contact_Info__
 Dan Kotowski
